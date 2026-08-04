@@ -680,6 +680,10 @@ export function getEquipmentById(id: string): EquipmentItem | undefined {
   return equipment.find((e) => e.id === id);
 }
 
+export function getTruckEquipmentById(id: string): TruckItem | undefined {
+  return truckEquipment.find((t) => t.id === id);
+}
+
 export function getCursedPossessionById(id: string): CursedPossession | undefined {
   return cursedPossessions.find((c) => c.id === id);
 }

@@ -634,7 +634,7 @@ export const ghosts: Ghost[] = [
       speeds: [{ condition: "Always", value: 1.7 }],
     },
     smudgeBehavior: "Smudging forces a 180s (3 min) wait before it can hunt again, vs. 90s for other ghosts.",
-    reHuntCooldown: "90s (default), 180s after a smudge",
+    reHuntCooldown: "90s (default)",
     abilities: [
       "Behaves exactly like a 'default' ghost in every other respect — no ability or quirk beyond the extended smudge cooldown",
     ],

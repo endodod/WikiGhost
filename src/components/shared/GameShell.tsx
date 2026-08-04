@@ -79,7 +79,14 @@ export function GameShell({ tabs, activeId, onActiveIdChange, headerEnd, content
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col">{content ?? active?.content}</main>
+      <main className="flex flex-1 flex-col">
+        {content ??
+          tabs.map((tab) => (
+            <div key={tab.id} className={cn("flex flex-1 flex-col", tab.id !== active?.id && "hidden")}>
+              {tab.content}
+            </div>
+          ))}
+      </main>
     </div>
   );
 }

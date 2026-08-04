@@ -39,14 +39,12 @@ export const guides: Guide[] = [
     title: "Zero-Evidence Investigation Walkthrough",
     summary:
       "Zero-Evidence broken down step by step — the elimination order one experienced investigator uses when there's no evidence to lean on.",
-    intro: [
-      "This is the elimination *order* one experienced investigator uses — not the only valid order, but a solid default when you're not on a low-evidence difficulty and just need to read a single hunt for maximum information.",
-    ],
+    intro: [],
     stages: [
       {
         heading: "Stage 1 — Read the first hunt",
         intro:
-          "During the very first hunt, you're passively collecting four signals at once: **speed**, **blink pattern**, **throw behavior**, and **line-of-sight acceleration**. A single hunt can eliminate close to half the roster if you know what to watch for.",
+          "During the very first hunt, you're passively collecting several signals at once: **speed**, **blink pattern**, **throw behavior**, and **line-of-sight acceleration**. A single hunt can eliminate close to half the roster if you know what to watch for.",
         items: [
           {
             title: "1. Base speed",
@@ -64,11 +62,15 @@ export const guides: Guide[] = [
           },
           {
             title: "3. Salt",
-            body: "Wraith is the only ghost in the game that **never disturbs salt** — it walks through without leaving a footprint or getting slowed. If the ghost stepped in salt and disturbed it, that's a clean elimination of Wraith.",
+            body: "Wraith is the only ghost in the game that **never disturbs salt** under any circumstance — it walks through without leaving a footprint or getting slowed. If the ghost stepped in salt and disturbed it at least once, that's a clean elimination of Wraith. **Gallu** is a different kind of salt tell: its behavior flips with its state — it won't disturb salt while **Enraged** (right after salt/incense/crucifix is used on it) but disturbs it normally once **Weakened** (right after a hunt ends). Salt disturbance that's inconsistent across multiple triggers, rather than a hard never/always, points at Gallu instead of a straight Wraith read.",
           },
           {
             title: "4. The standard line-of-sight acceleration check",
-            body: "This is the detail worth knowing cold: **most ghosts** gradually accelerate while holding continuous line of sight on a player, reaching roughly 1.65× base speed (~2.805 m/s) after about 13 seconds. This is a *universal* mechanic layered under everything else — but there are exactly **three confirmed exceptions that never get this acceleration**: **Hantu**, **Thaye**, and **Deogen** (Deogen instead slows down as it closes in). If you clocked a standard LOS speed-up happening, you've ruled out Hantu specifically (Thaye and Deogen are usually already excluded by their own distinctive speed signatures above).",
+            body: "This is the detail worth knowing cold: **most ghosts** gradually accelerate while holding continuous line of sight on a player, reaching roughly 1.65× base speed (~2.805 m/s) after about 13 seconds. This is a *universal* mechanic layered under everything else — but there are exactly **four confirmed exceptions that never get this acceleration**: **Hantu**, **Thaye**, **Deogen** (which instead slows down as it closes in), and **Deildegast** (whose hunt speed is instead set entirely by how many unique objects have been interacted with since its last hunt — 3.0 m/s if nothing's been touched, grinding down to a floor of ~0.4 m/s after 26-30 interactions). **Aswang** is a fifth wrinkle worth watching separately: it *does* get the acceleration, just abnormally fast, off a lower starting speed — reaching full sprint in under 9 seconds of sustained line of sight instead of the usual ~13. If you clocked a standard ~13-second ramp-up, you've ruled out all four non-accelerators plus Aswang's fast-ramp variant at once — Deogen is usually already excluded by its own distinctive speed signature above, so the useful new information here is against Hantu, Thaye, Deildegast, and Aswang.",
+          },
+          {
+            title: "4b. Hantu vs. Thaye vs. Deildegast",
+            body: "If no LOS speed-up showed up, Hantu, Thaye, and Deildegast are all still live and need separating from each other: watch how speed trends across the investigation rather than within a single hunt. **Thaye** ages with the contract — it gets progressively slower the longer the investigation runs, so a hunt late in the round should be noticeably sluggish next to one from early on, and that slowdown never resets. **Hantu**, instead, tracks room temperature — faster in a cold room, closer to normal in a warm one — regardless of how much time has passed or how many hunts have happened. **Deildegast** resets to a fast 3.0 m/s at the start of every hunt and then grinds down purely off how many unique objects get interacted with before the *next* hunt — so a hunt that comes in fast again shortly after the last one (with little object interaction in between) points to Deildegast, while a slowdown that's tied to elapsed contract time points to Thaye and one tied to room temperature points to Hantu.",
           },
           {
             title: "5. Blink pattern",
@@ -79,8 +81,8 @@ export const guides: Guide[] = [
             ],
           },
           {
-            title: "6. Model shapeshifting",
-            body: "**Obake** is the only ghost that swaps its model mid-hunt, on a fixed schedule of specific blink counts. If the model stayed the same the whole hunt (and the hunt ran long enough to plausibly hit those trigger points), that's an elimination.",
+            title: "6. Model",
+            body: "**Obake** is the only ghost that swaps its model mid-hunt, on a fixed schedule of specific blink counts. If the model stayed the same the whole hunt (and the hunt ran long enough to plausibly hit those trigger points), that's an elimination of Obake. Separately, **Dayan** is always a female ghost model. **Banshee** is the only other ghost in the game locked to a female model — so this is a free, passive check for both: if the model reads as male, Dayan and Banshee are both ruled out immediately.",
           },
           {
             title: "7. Throw force",
@@ -89,32 +91,45 @@ export const guides: Guide[] = [
         ],
       },
       {
-        heading: "Stage 2 — Active room tests",
+        heading: "Stage 2 — Detection range",
+        intro:
+          "Still during that same first hunt: three ghosts have hearing or detection ranges wildly different from normal, worth checking before you move on.",
+        items: [
+          {
+            title: "8. Myling",
+            body: "Myling's hunt-audio range is reduced — footsteps and vocals cut off around 12m instead of the normal ~20m. If you can hear it clearly from further away than that during the hunt, it's not a Myling.",
+          },
+          {
+            title: "9. Yokai",
+            body: "Yokai has a drastically reduced detection range during a hunt (roughly 2.5m for electronics vs. the normal 7.5m/9m). Walk away, then turn on an electronic item (like a flashlight) from well outside that range while it's hunting. If it reacts and comes straight back, that's inconsistent with Yokai's short detection radius — rule it out.",
+          },
+          {
+            title: "10. Kormos",
+            body: "Kormos is completely blind during hunts and tracks purely by sound, but with detection range far beyond normal — roughly 10m crouched, 15m walking, 30m sprinting, even through walls and doors. Staying crouched and silent lets you walk right past it in plain sight during a hunt; if it beelines for you anyway with no noise made, it's not a Kormos.",
+          },
+        ],
+      },
+      {
+        heading: "Stage 3 — Active room tests",
         intro: "With the field narrowed, head to the ghost's favorite room and run a couple of setups at once.",
         items: [
           {
-            title: "8. Crucifix + firelight test (Onryo vs. Shade)",
+            title: "11. Crucifix + firelight test (Onryo vs. Shade)",
             body: "Place a **crucifix** and a **lit firelight** in the same room. **Onryo** is built around extinguishing flames as part of its hunt-trigger logic — if a nearby lit flame is within range when it would otherwise start a hunt, it prioritizes blowing that flame out *instead of* triggering the hunt. So: if the crucifix burns (meaning a hunt was attempted and blocked) *while the firelight is still lit*, that's inconsistent with Onryo's known behavior — rule it out. While you're waiting in the room, if the ghost **hunts while you're physically inside its favorite room**, that rules out **Shade** — it's specifically restricted from hunting, doing events, or most EMF-tier interactions while a player shares its room. *Caveat: watch room boundaries carefully on small maps — a Shade can step just outside its room to interact and create a false positive, so don't rule it out from a borderline case.*",
           },
           {
-            title: "9. Orb check",
+            title: "12. Orb check",
             body: "While in the room, check for ghost orbs. **The Mimic's** ability spawns an orb in its favorite room as an unofficial \"extra\" piece of evidence — one that shows up even outside its official evidence set, and even on zero/low-evidence difficulties, since it isn't officially tied to the evidence system. Seeing an orb here is a solid Mimic tell.",
           },
         ],
       },
       {
-        heading: "Stage 3 — Sound and light-based tests",
+        heading: "Stage 4 — Smudge test (Demon vs. Spirit)",
+        intro:
+          "One more active test before falling back on passive reads: if you've still got a smudge stick, its hunt-cooldown side effect narrows two of the trickiest ghosts in one shot.",
         items: [
           {
-            title: "10. Myling",
-            body: "Myling's hunt-audio range is reduced — footsteps and vocals cut off around 12m instead of the normal ~20m. If you can hear it clearly from further away than that, it's not a Myling.",
-          },
-          {
-            title: "11. Yokai",
-            body: "Yokai has a drastically reduced detection range (roughly 2.5m for electronics vs. the normal 7.5m/9m). Walk away, then turn on an electronic item (like a flashlight) from well outside that range. If it reacts and comes straight back, that's inconsistent with Yokai's short detection radius — rule it out.",
-          },
-          {
-            title: "12. Smudge test (Demon vs. Spirit)",
+            title: "13. Smudge test (Demon vs. Spirit)",
             body: "Smudge the ghost and time the next hunt:",
             bullets: [
               "**Demon** needs only ~60 seconds after a smudge before it can hunt again (vs. the normal 90s).",
@@ -125,34 +140,54 @@ export const guides: Guide[] = [
         ],
       },
       {
-        heading: "Stage 4 — The stragglers",
+        heading: "Stage 5 — Varying speed",
+        intro:
+          "These ghosts don't have one fixed hunt speed — theirs shifts predictably, either on a timer or off an external trigger. Catching the pattern across more than one hunt (or one hunt with a state change) is the tell.",
         items: [
           {
-            title: "13. Twins",
+            title: "14. Twins",
             body: "Twins randomly roll one of two fixed hunt speeds each time (slower ~1.5 m/s or faster ~1.9 m/s) — the point is that repeated hunts should show visible *speed variance* between them. If every hunt has come in at the same consistent speed across multiple hunts, that's a mark against Twins.",
           },
           {
-            title: "14. Yurei",
+            title: "15. Obambo",
+            body: "Obambo alternates between two states roughly every 2 minutes: **Aggressive** (~1.96 m/s, hunts at ≤65% sanity, hunts run 20% shorter) and **Calm** (~1.45 m/s, hunts only at ≤10% sanity). It starts every contract Calm, first switching about a minute after the exit door is opened, and can even flip state mid-hunt — a hunt that visibly speeds up or slows down partway through is a strong Obambo tell.",
+          },
+          {
+            title: "16. Gallu, again",
+            body: "Gallu's three-state cycle also shows up as a raw speed change, not just the salt behavior from earlier: Normal (1.7 m/s) → Enraged (1.96 m/s, triggered by salt/incense/crucifix) → Weakened (1.36 m/s, right after a hunt ends) → back to Normal. A ghost that visibly speeds up right after you use salt/incense/crucifix on it, then visibly slows down right after a hunt ends, is about as confirmed as Gallu gets without evidence.",
+          },
+        ],
+      },
+      {
+        heading: "Stage 6 — The stragglers",
+        intro:
+          "The rest of the roster comes down to behavior patterns rather than a single clean test — worth checking last since they lean on probability or absence rather than a hard rule.",
+        items: [
+          {
+            title: "17. Yurei",
             body: "Yurei must fully open or fully close any door it interacts with — leaving a door at any half-open state is impossible for it. If the ghost's room has no doors to observe, this test simply can't run, and Yurei stays on the table until you can test it another way (e.g. tracking with motion sensors whether it gets trapped in-room for ~90 seconds after a smudge, another documented Yurei trait).",
           },
           {
-            title: "15. Banshee",
+            title: "18. Banshee",
             body: "By this stage, you're watching whether the ghost seems to be actively roaming toward you specifically, the way a Banshee stalks its one chosen target. If you're unsure, listen for the distinct wail on a parabolic mic or sound recorder — it has roughly a 1-in-3 chance of producing it on a given response. After several non-scream responses in a row, the odds swing hard against Banshee, though — being probability-based — this isn't an absolute proof the way a salt-and-Wraith test is.",
           },
         ],
       },
     ],
     closing: {
-      heading: "The Unholy Trinity: Mare, Demon, Goryo",
+      heading: "The Hardest to Pin Down: Mare, Demon, Goryo, Yurei, Spirit, Shade",
       intro:
         "If you've run this whole flow and you're still stuck, there's a good chance you've landed on one of the ghosts the wider Phasmophobia community broadly agrees are the hardest to pin down with zero evidence:",
       bullets: [
         "**Mare** — its only real tell (preferring darkness, killing lights right after they're turned on, never turning lights *on*) is something any ghost can coincidentally do; you need to see the pattern repeat before it means anything.",
         "**Demon** — without incense/smudges left to test its short hunt-cooldown, and without a Ouija board or crucifix interaction to watch, it has very little that separates it from a \"generic\" fast, aggressive ghost.",
         "**Goryo** — its defining trait (never changing its favorite room) is a non-event you can only confirm by absence over time; it gives you nothing active to test for.",
+        "**Yurei** — its door test needs an actual door in its favorite room to run at all; without one, you're left relying on the weaker, indirect smudge-trap sign instead of a clean test.",
+        "**Spirit** — its only tell is a ~180s re-hunt after a smudge; burn your last smudge stick early or on the wrong ghost, and there's nothing left that separates it from a default one.",
+        "**Shade** — ruled out only by catching it hunting while you share its room, which means being in the right place at the right time, and small-map room boundaries can produce a false positive either way.",
       ],
       outro:
-        "Community discussion frequently lists Yurei, Spirit, and Shade alongside this group too — but by this point in the flow those three have already been handled by earlier tests (the door test, the smudge-cooldown test, and the same-room-hunt test respectively). What's left standing after all of that really is close to a coin flip. At that point: pick one, and treat it as an educated guess rather than a certainty.",
+        "If every test in this flow has come back neutral, whatever's left standing among these six really is close to a coin flip. At that point: pick one, and treat it as an educated guess rather than a certainty.",
     },
   },
   {

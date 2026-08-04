@@ -10,12 +10,13 @@ import {
   consumablesNote,
   cursedPossessions,
   equipment,
+  getCursedPossessionById,
+  getEquipmentById,
+  getTruckEquipmentById,
   truckEquipment,
-  type CursedPossession,
-  type EquipmentItem,
-  type TruckItem,
 } from "@/data/items";
-import { useMemo, useState } from "react";
+import { useUrlParams } from "@/lib/useUrlParams";
+import { useMemo } from "react";
 
 function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
@@ -27,9 +28,10 @@ function SectionHeading({ title, subtitle }: { title: string; subtitle?: string 
 }
 
 export function ItemsView() {
-  const [selectedEquipment, setSelectedEquipment] = useState<EquipmentItem | null>(null);
-  const [selectedTruck, setSelectedTruck] = useState<TruckItem | null>(null);
-  const [selectedCursed, setSelectedCursed] = useState<CursedPossession | null>(null);
+  const { values, push } = useUrlParams(["item", "truck", "cursed"]);
+  const selectedEquipment = values.item ? getEquipmentById(values.item) ?? null : null;
+  const selectedTruck = values.truck ? getTruckEquipmentById(values.truck) ?? null : null;
+  const selectedCursed = values.cursed ? getCursedPossessionById(values.cursed) ?? null : null;
 
   const starter = useMemo(() => equipment.filter((e) => e.category === "starter"), []);
   const optional = useMemo(() => equipment.filter((e) => e.category === "optional"), []);
@@ -48,7 +50,7 @@ export function ItemsView() {
         <SectionHeading title="Starter Equipment" subtitle="Always available from level 1, no purchase required." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {starter.map((item) => (
-            <EquipmentCard key={item.id} item={item} onSelect={setSelectedEquipment} />
+            <EquipmentCard key={item.id} item={item} onSelect={(e) => push({ item: e.id })} />
           ))}
         </div>
       </div>
@@ -57,19 +59,19 @@ export function ItemsView() {
         <SectionHeading title="Optional Equipment" subtitle="Unlocked by level, purchased with in-game cash." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {optional.map((item) => (
-            <EquipmentCard key={item.id} item={item} onSelect={setSelectedEquipment} />
+            <EquipmentCard key={item.id} item={item} onSelect={(e) => push({ item: e.id })} />
           ))}
         </div>
+        <p className="text-xs text-muted">{consumablesNote}</p>
       </div>
 
       <div className="flex flex-col gap-3">
         <SectionHeading title="Truck Equipment" subtitle="Stationary monitors in the van — always present, no tiers." />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {truckEquipment.map((item) => (
-            <TruckEquipmentCard key={item.id} item={item} onSelect={setSelectedTruck} />
+            <TruckEquipmentCard key={item.id} item={item} onSelect={(t) => push({ truck: t.id })} />
           ))}
         </div>
-        <p className="text-xs text-muted">{consumablesNote}</p>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -79,19 +81,19 @@ export function ItemsView() {
         />
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {cursedPossessions.map((item) => (
-            <CursedPossessionCard key={item.id} item={item} onSelect={setSelectedCursed} />
+            <CursedPossessionCard key={item.id} item={item} onSelect={(c) => push({ cursed: c.id })} />
           ))}
         </div>
       </div>
 
       {selectedEquipment && (
-        <EquipmentDetail item={selectedEquipment} onClose={() => setSelectedEquipment(null)} />
+        <EquipmentDetail item={selectedEquipment} onClose={() => window.history.back()} />
       )}
       {selectedTruck && (
-        <TruckEquipmentDetail item={selectedTruck} onClose={() => setSelectedTruck(null)} />
+        <TruckEquipmentDetail item={selectedTruck} onClose={() => window.history.back()} />
       )}
       {selectedCursed && (
-        <CursedPossessionDetail item={selectedCursed} onClose={() => setSelectedCursed(null)} />
+        <CursedPossessionDetail item={selectedCursed} onClose={() => window.history.back()} />
       )}
     </div>
   );

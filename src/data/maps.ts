@@ -148,6 +148,10 @@ export const maps: GameMap[] = [
   },
 ];
 
+export function getMapById(id: string): GameMap | undefined {
+  return maps.find((m) => m.id === id);
+}
+
 export interface RemovedMap {
   id: string;
   name: string;

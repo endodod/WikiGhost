@@ -2,11 +2,22 @@
 
 import { guides, type Guide } from "@/data/guides";
 import { cn } from "@/lib/cn";
-import { renderInline } from "@/lib/markdownLite";
+import { renderGuideText } from "@/lib/ghostLinker";
+import { useUrlParams } from "@/lib/useUrlParams";
 import { BookOpen } from "lucide-react";
-import { useState } from "react";
+import { useEffect } from "react";
 
-function GuideContent({ guide }: { guide: Guide }) {
+function stageId(index: number) {
+  return `guide-stage-${index}`;
+}
+
+const CLOSING_CHAPTER = "closing";
+
+function chapterSectionId(chapter: string) {
+  return chapter === CLOSING_CHAPTER ? "guide-closing" : stageId(Number(chapter));
+}
+
+function GuideContent({ guide, onViewGhost }: { guide: Guide; onViewGhost: (ghostId: string) => void }) {
   return (
     <article className="flex flex-col gap-6">
       <header className="flex flex-col gap-2 border-b border-surface-border pb-4">
@@ -16,24 +27,30 @@ function GuideContent({ guide }: { guide: Guide }) {
 
       <div className="flex flex-col gap-2 text-sm text-foreground/90">
         {guide.intro.map((p, i) => (
-          <p key={i}>{renderInline(p)}</p>
+          <p key={i}>{renderGuideText(p, onViewGhost)}</p>
         ))}
       </div>
 
       {guide.stages.map((stage, i) => (
-        <section key={i} className="flex flex-col gap-4">
-          <h2 className="text-sm font-bold uppercase tracking-wide text-accent">{stage.heading}</h2>
-          {stage.intro && <p className="text-sm text-foreground/90">{renderInline(stage.intro)}</p>}
+        <section key={i} id={stageId(i)} className="flex scroll-mt-[calc(var(--app-header-h)+16px)] flex-col gap-4">
+          <h2 className="text-sm font-bold uppercase tracking-wide text-accent">
+            {renderGuideText(stage.heading, onViewGhost)}
+          </h2>
+          {stage.intro && (
+            <p className="text-sm text-foreground/90">{renderGuideText(stage.intro, onViewGhost)}</p>
+          )}
 
           <div className="flex flex-col gap-4">
             {stage.items.map((item, j) => (
               <div key={j} className="rounded-lg border border-surface-border bg-surface p-3.5">
-                <h3 className="mb-1.5 text-sm font-semibold text-foreground">{item.title}</h3>
-                <p className="text-sm text-foreground/90">{renderInline(item.body)}</p>
+                <h3 className="mb-1.5 text-sm font-semibold text-foreground">
+                  {renderGuideText(item.title, onViewGhost)}
+                </h3>
+                <p className="text-sm text-foreground/90">{renderGuideText(item.body, onViewGhost)}</p>
                 {item.bullets && (
                   <ul className="mt-2 list-disc space-y-1 pl-4 text-sm text-foreground/90">
                     {item.bullets.map((b, k) => (
-                      <li key={k}>{renderInline(b)}</li>
+                      <li key={k}>{renderGuideText(b, onViewGhost)}</li>
                     ))}
                   </ul>
                 )}
@@ -43,15 +60,24 @@ function GuideContent({ guide }: { guide: Guide }) {
         </section>
       ))}
 
-      <section className="flex flex-col gap-3 rounded-xl border border-accent/30 bg-accent/5 p-4">
-        <h2 className="text-sm font-bold uppercase tracking-wide text-accent">{guide.closing.heading}</h2>
-        {guide.closing.intro && <p className="text-sm text-foreground/90">{renderInline(guide.closing.intro)}</p>}
+      <section
+        id="guide-closing"
+        className="flex scroll-mt-[calc(var(--app-header-h)+16px)] flex-col gap-3 rounded-xl border border-accent/30 bg-accent/5 p-4"
+      >
+        <h2 className="text-sm font-bold uppercase tracking-wide text-accent">
+          {renderGuideText(guide.closing.heading, onViewGhost)}
+        </h2>
+        {guide.closing.intro && (
+          <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.intro, onViewGhost)}</p>
+        )}
         <ul className="list-disc space-y-1.5 pl-4 text-sm text-foreground/90">
           {guide.closing.bullets.map((b, i) => (
-            <li key={i}>{renderInline(b)}</li>
+            <li key={i}>{renderGuideText(b, onViewGhost)}</li>
           ))}
         </ul>
-        {guide.closing.outro && <p className="text-sm text-foreground/90">{renderInline(guide.closing.outro)}</p>}
+        {guide.closing.outro && (
+          <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.outro, onViewGhost)}</p>
+        )}
       </section>
 
       {guide.sources && (
@@ -59,7 +85,7 @@ function GuideContent({ guide }: { guide: Guide }) {
           <h2 className="text-xs font-semibold uppercase tracking-wide text-muted">{guide.sources.heading}</h2>
           <ul className="list-disc space-y-1 pl-4 text-xs text-muted">
             {guide.sources.bullets.map((b, i) => (
-              <li key={i}>{renderInline(b)}</li>
+              <li key={i}>{renderGuideText(b, onViewGhost)}</li>
             ))}
           </ul>
         </section>
@@ -69,8 +95,29 @@ function GuideContent({ guide }: { guide: Guide }) {
 }
 
 export function GuidesView() {
-  const [activeId, setActiveId] = useState(guides[0]?.id);
-  const active = guides.find((g) => g.id === activeId) ?? guides[0];
+  // Guide/chapter selection and cross-tab ghost links all push a history entry —
+  // switching guides or chapters, or jumping to a ghost, are each an undoable step.
+  const { values, push } = useUrlParams(["guide", "chapter", "tab"]);
+  const active = guides.find((g) => g.id === values.guide) ?? guides[0];
+
+  // A chapter link click already scrolls immediately; this also restores scroll
+  // position when `chapter` changes via back/forward instead of a click.
+  useEffect(() => {
+    if (!values.chapter) return;
+    document.getElementById(chapterSectionId(values.chapter))?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [values.chapter]);
+
+  function selectGuide(id: string) {
+    push({ guide: id, chapter: null });
+  }
+
+  function selectChapter(chapter: string) {
+    push({ chapter });
+  }
+
+  function viewGhost(ghostId: string) {
+    push({ tab: "wiki", wghost: ghostId });
+  }
 
   if (!active) {
     return (
@@ -91,28 +138,57 @@ export function GuidesView() {
       </div>
 
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-        {guides.length > 1 && (
-          <nav className="flex shrink-0 flex-col gap-1 lg:w-56">
+        <div className="sticky top-[calc(var(--app-header-h)+16px)] flex max-h-[calc(100dvh-var(--app-header-h)-32px)] shrink-0 flex-col gap-4 overflow-y-auto lg:w-56">
+          <nav className="flex flex-col gap-1">
+            {guides.length > 1 && (
+              <span className="flex items-center gap-1.5 px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">
+                <BookOpen className="size-3.5" />
+                Guides
+              </span>
+            )}
             {guides.map((g) => (
-              <button
-                key={g.id}
-                onClick={() => setActiveId(g.id)}
-                className={cn(
-                  "flex items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition",
-                  g.id === active.id
-                    ? "bg-accent-strong text-white"
-                    : "text-muted hover:bg-surface-2 hover:text-foreground"
+              <div key={g.id} className="flex flex-col gap-1">
+                {guides.length > 1 && (
+                  <button
+                    onClick={() => selectGuide(g.id)}
+                    className={cn(
+                      "flex items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition",
+                      g.id === active.id
+                        ? "bg-accent-strong text-white"
+                        : "text-muted hover:bg-surface-2 hover:text-foreground"
+                    )}
+                  >
+                    <BookOpen className="mt-0.5 size-3.5 shrink-0" />
+                    {g.title}
+                  </button>
                 )}
-              >
-                <BookOpen className="mt-0.5 size-3.5 shrink-0" />
-                {g.title}
-              </button>
+
+                {g.id === active.id && (
+                  <div className="flex flex-col gap-1 py-1 pl-5">
+                    {active.stages.map((stage, i) => (
+                      <button
+                        key={i}
+                        onClick={() => selectChapter(String(i))}
+                        className="rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground"
+                      >
+                        {stage.heading}
+                      </button>
+                    ))}
+                    <button
+                      onClick={() => selectChapter(CLOSING_CHAPTER)}
+                      className="rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground"
+                    >
+                      {active.closing.heading}
+                    </button>
+                  </div>
+                )}
+              </div>
             ))}
           </nav>
-        )}
+        </div>
 
         <div className="min-w-0 flex-1 rounded-xl border border-surface-border bg-surface p-4 sm:p-6">
-          <GuideContent guide={active} />
+          <GuideContent guide={active} onViewGhost={viewGhost} />
         </div>
       </div>
     </div>

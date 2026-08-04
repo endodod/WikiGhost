@@ -2,13 +2,15 @@
 
 import { MapCard } from "@/components/maps/MapCard";
 import { MapDetail } from "@/components/maps/MapDetail";
-import { LIGHT_LIMITS, SIZE_LABELS, maps, removedMaps, type GameMap, type MapSize } from "@/data/maps";
-import { useMemo, useState } from "react";
+import { LIGHT_LIMITS, SIZE_LABELS, getMapById, maps, removedMaps, type MapSize } from "@/data/maps";
+import { useUrlParams } from "@/lib/useUrlParams";
+import { useMemo } from "react";
 
 const SIZE_ORDER: MapSize[] = ["small", "medium", "large"];
 
 export function MapsView() {
-  const [selected, setSelected] = useState<GameMap | null>(null);
+  const { values, push } = useUrlParams(["map"]);
+  const selected = values.map ? getMapById(values.map) ?? null : null;
 
   const bySize = useMemo(() => {
     return SIZE_ORDER.map((size) => ({
@@ -38,7 +40,7 @@ export function MapsView() {
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {items.map((map) => (
-              <MapCard key={map.id} map={map} onSelect={setSelected} />
+              <MapCard key={map.id} map={map} onSelect={(m) => push({ map: m.id })} />
             ))}
           </div>
         </div>
@@ -64,7 +66,7 @@ export function MapsView() {
         </div>
       )}
 
-      {selected && <MapDetail map={selected} onClose={() => setSelected(null)} />}
+      {selected && <MapDetail map={selected} onClose={() => window.history.back()} />}
     </div>
   );
 }

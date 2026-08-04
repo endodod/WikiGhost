@@ -7,41 +7,33 @@ import { SearchBar } from "@/components/wiki/SearchBar";
 import { getGhostById, ghosts } from "@/data/ghosts";
 import { searchGhosts } from "@/lib/search";
 import type { Ghost } from "@/lib/types";
+import { useUrlParams } from "@/lib/useUrlParams";
 import { LayoutGrid, Table2 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 type ViewMode = "grid" | "table";
 
-interface WikiViewProps {
-  /** When set (e.g. from "View in Ghost Wiki" in Find My Ghost), opens that ghost's detail. */
-  focusGhostId?: string | null;
-  onFocusHandled?: () => void;
-}
-
-export function WikiView({ focusGhostId, onFocusHandled }: WikiViewProps = {}) {
+export function WikiView() {
   const [query, setQuery] = useState("");
   const [view, setView] = useState<ViewMode>("grid");
-  const [selected, setSelected] = useState<Ghost | null>(null);
+  const { values, push } = useUrlParams(["wghost"]);
+  const selected = values.wghost ? getGhostById(values.wghost) ?? null : null;
 
   const filtered = useMemo(() => searchGhosts(ghosts, query), [query]);
 
-  // Adjust our own state in response to a new focus request during render
-  // (React's recommended pattern) — but notifying the parent has to wait
-  // until after commit, via an effect, since updating a different
-  // component's state mid-render is not allowed.
-  const [lastFocusId, setLastFocusId] = useState<string | null | undefined>(undefined);
-  if (focusGhostId && focusGhostId !== lastFocusId) {
-    setLastFocusId(focusGhostId);
-    const ghost = getGhostById(focusGhostId);
-    if (ghost) setSelected(ghost);
+  function selectGhost(ghost: Ghost) {
+    push({ wghost: ghost.id });
   }
-
-  useEffect(() => {
-    if (focusGhostId) onFocusHandled?.();
-  }, [focusGhostId, onFocusHandled]);
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-bold text-foreground">Ghost Wiki</h1>
+        <p className="text-sm text-muted">
+          All 30 ghost types with their evidence, tells, and behavior — browse the grid or table, or search by name.
+        </p>
+      </div>
+
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <SearchBar value={query} onChange={setQuery} />
         <div className="flex shrink-0 items-center gap-1 rounded-lg border border-surface-border bg-surface-2 p-1">
@@ -77,14 +69,14 @@ export function WikiView({ focusGhostId, onFocusHandled }: WikiViewProps = {}) {
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((ghost) => (
-            <GhostCard key={ghost.id} ghost={ghost} onSelect={setSelected} />
+            <GhostCard key={ghost.id} ghost={ghost} onSelect={selectGhost} />
           ))}
         </div>
       ) : (
-        <GhostTable ghosts={filtered} onSelect={setSelected} />
+        <GhostTable ghosts={filtered} onSelect={selectGhost} />
       )}
 
-      {selected && <GhostDetail ghost={selected} onClose={() => setSelected(null)} />}
+      {selected && <GhostDetail ghost={selected} onClose={() => window.history.back()} />}
     </div>
   );
 }

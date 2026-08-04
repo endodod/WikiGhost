@@ -9,16 +9,16 @@ import { SanityFilter } from "@/components/eliminate/SanityFilter";
 import { SpeedFilter } from "@/components/eliminate/SpeedFilter";
 import { SpeedFinderTool } from "@/components/eliminate/SpeedFinderTool";
 import { TellsChecklist } from "@/components/eliminate/TellsChecklist";
-import { ghosts } from "@/data/ghosts";
+import { getGhostById, ghosts } from "@/data/ghosts";
 import { cn } from "@/lib/cn";
 import { evaluateAll, hasActiveFilters, type EliminationState } from "@/lib/filter";
 import {
   EVIDENCE_TYPES,
   type Evidence,
   type EvidenceCount,
-  type Ghost,
   type SpeedBucket,
 } from "@/lib/types";
+import { useUrlParams } from "@/lib/useUrlParams";
 import { RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
@@ -26,18 +26,14 @@ const initialEvidenceStates: Record<Evidence, EvidenceState> = Object.fromEntrie
   EVIDENCE_TYPES.map((ev) => [ev, "unknown"])
 ) as Record<Evidence, EvidenceState>;
 
-interface EliminateViewProps {
-  /** Jumps to the given ghost's full entry in the Ghost Wiki tab. */
-  onViewInWiki?: (ghostId: string) => void;
-}
-
-export function EliminateView({ onViewInWiki }: EliminateViewProps = {}) {
+export function EliminateView() {
   const [evidenceStates, setEvidenceStates] = useState(initialEvidenceStates);
   const [givenEvidenceCount, setGivenEvidenceCount] = useState<EvidenceCount>(3);
   const [speedBucket, setSpeedBucket] = useState<SpeedBucket | null>(null);
   const [sanityObserved, setSanityObserved] = useState<number | null>(null);
   const [activeClueIds, setActiveClueIds] = useState<string[]>([]);
-  const [selectedGhost, setSelectedGhost] = useState<Ghost | null>(null);
+  const { values, push } = useUrlParams(["fghost"]);
+  const selectedGhost = values.fghost ? getGhostById(values.fghost) ?? null : null;
   const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
   const [crossedOutIds, setCrossedOutIds] = useState<string[]>([]);
   const [speedFinderResetKey, setSpeedFinderResetKey] = useState(0);
@@ -113,6 +109,16 @@ export function EliminateView({ onViewInWiki }: EliminateViewProps = {}) {
 
   return (
     <div className="flex flex-1 flex-col">
+      <div className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-lg font-bold text-foreground">Find My Ghost</h1>
+          <p className="text-sm text-muted">
+            Toggle the evidence you&rsquo;ve found or ruled out, add sanity/speed readings and tells, and narrow down
+            the culprit.
+          </p>
+        </div>
+      </div>
+
       <div className="sticky top-[var(--app-header-h)] z-20 bg-background/95 backdrop-blur">
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6">
           <div className="flex flex-col gap-4 rounded-xl border border-surface-border bg-surface p-4 lg:flex-row lg:items-stretch lg:gap-6">
@@ -177,7 +183,7 @@ export function EliminateView({ onViewInWiki }: EliminateViewProps = {}) {
               verdicts={verdicts}
               highlightedIds={highlightedIds}
               crossedOutIds={crossedOutIds}
-              onSelectGhost={setSelectedGhost}
+              onSelectGhost={(ghost) => push({ fghost: ghost.id })}
               onToggleHighlight={toggleHighlight}
               onToggleCrossOut={toggleCrossOut}
             />
@@ -188,9 +194,9 @@ export function EliminateView({ onViewInWiki }: EliminateViewProps = {}) {
       {selectedGhost && (
         <GhostDetail
           ghost={selectedGhost}
-          onClose={() => setSelectedGhost(null)}
+          onClose={() => window.history.back()}
           variant="compact"
-          onViewInWiki={onViewInWiki ? () => onViewInWiki(selectedGhost.id) : undefined}
+          onViewInWiki={() => push({ tab: "wiki", wghost: selectedGhost.id, fghost: null })}
         />
       )}
     </div>
