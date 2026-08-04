@@ -1,5 +1,5 @@
-import { alwaysObjective, objectivePool, perfectInvestigation } from "@/data/objectives";
-import { CheckCircle2, Star } from "lucide-react";
+import { alwaysObjective, objectivePool } from "@/data/objectives";
+import { CheckCircle2 } from "lucide-react";
 
 function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
@@ -12,12 +12,14 @@ function SectionHeading({ title, subtitle }: { title: string; subtitle?: string 
 
 export function ObjectivesView() {
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-4 sm:px-6">
-      <div className="rounded-xl border border-surface-border bg-surface p-4 text-xs text-muted">
-        <p>
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-4 sm:px-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-bold text-foreground">Objectives Wiki</h1>
+        <p className="text-sm text-muted">
           Every contract has 4 objectives: &ldquo;Find the correct ghost type&rdquo; is always present, plus 3 more
           chosen at random from the pool below. Objectives are optional (skipping them just forfeits money/XP) and
-          can be done in any order — some need equipment beyond the starter loadout.
+          can be done in any order — some need equipment beyond the starter loadout. Looking for the Perfect
+          Investigation bonus? That&rsquo;s now its own guide in the Guides tab.
         </p>
       </div>
 
@@ -51,45 +53,6 @@ export function ObjectivesView() {
               {obj.how && <p className="text-xs text-muted">{obj.how}</p>}
             </div>
           ))}
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-4 rounded-xl border border-accent/30 bg-accent/5 p-4">
-        <div className="flex items-center gap-2">
-          <Star className="size-4 text-accent" />
-          <h2 className="text-sm font-bold uppercase tracking-wide text-accent">Perfect Investigation</h2>
-        </div>
-
-        <p className="text-sm text-foreground/90">{perfectInvestigation.summary}</p>
-        <ol className="list-decimal space-y-1.5 pl-4 text-sm text-foreground/90">
-          {perfectInvestigation.requirements.map((r, i) => (
-            <li key={i}>{r}</li>
-          ))}
-        </ol>
-        <p className="text-xs text-muted">{perfectInvestigation.uniqueNote}</p>
-
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-          {perfectInvestigation.mediaBreakdown.map((device) => (
-            <div key={device.device} className="flex flex-col gap-2 rounded-lg border border-surface-border bg-surface p-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-foreground">
-                {device.device} <span className="text-muted">— need {device.need} Unique</span>
-              </h3>
-              <ul className="list-disc space-y-1 pl-4 text-xs text-foreground/90">
-                {device.items.map((it, i) => (
-                  <li key={i}>{it}</li>
-                ))}
-              </ul>
-            </div>
-          ))}
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <h3 className="text-xs font-semibold uppercase tracking-wide text-foreground">Practical Run Order</h3>
-          <ol className="list-decimal space-y-1.5 pl-4 text-sm text-foreground/90">
-            {perfectInvestigation.runOrder.map((step, i) => (
-              <li key={i}>{step}</li>
-            ))}
-          </ol>
         </div>
       </div>
     </div>

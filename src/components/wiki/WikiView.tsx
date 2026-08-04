@@ -4,20 +4,41 @@ import { GhostCard } from "@/components/wiki/GhostCard";
 import { GhostDetail } from "@/components/wiki/GhostDetail";
 import { GhostTable } from "@/components/wiki/GhostTable";
 import { SearchBar } from "@/components/wiki/SearchBar";
-import { ghosts } from "@/data/ghosts";
+import { getGhostById, ghosts } from "@/data/ghosts";
 import { searchGhosts } from "@/lib/search";
 import type { Ghost } from "@/lib/types";
 import { LayoutGrid, Table2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type ViewMode = "grid" | "table";
 
-export function WikiView() {
+interface WikiViewProps {
+  /** When set (e.g. from "View in Ghost Wiki" in Find My Ghost), opens that ghost's detail. */
+  focusGhostId?: string | null;
+  onFocusHandled?: () => void;
+}
+
+export function WikiView({ focusGhostId, onFocusHandled }: WikiViewProps = {}) {
   const [query, setQuery] = useState("");
   const [view, setView] = useState<ViewMode>("grid");
   const [selected, setSelected] = useState<Ghost | null>(null);
 
   const filtered = useMemo(() => searchGhosts(ghosts, query), [query]);
+
+  // Adjust our own state in response to a new focus request during render
+  // (React's recommended pattern) — but notifying the parent has to wait
+  // until after commit, via an effect, since updating a different
+  // component's state mid-render is not allowed.
+  const [lastFocusId, setLastFocusId] = useState<string | null | undefined>(undefined);
+  if (focusGhostId && focusGhostId !== lastFocusId) {
+    setLastFocusId(focusGhostId);
+    const ghost = getGhostById(focusGhostId);
+    if (ghost) setSelected(ghost);
+  }
+
+  useEffect(() => {
+    if (focusGhostId) onFocusHandled?.();
+  }, [focusGhostId, onFocusHandled]);
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6">

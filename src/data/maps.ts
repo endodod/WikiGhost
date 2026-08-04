@@ -21,6 +21,12 @@ export const SIZE_LABELS: Record<MapSize, string> = {
   large: "Large Maps",
 };
 
+export const SIZE_LABELS_SINGULAR: Record<MapSize, string> = {
+  small: "Small Map",
+  medium: "Medium Map",
+  large: "Large Map",
+};
+
 export const maps: GameMap[] = [
   // --- Small ---
   {
@@ -28,7 +34,7 @@ export const maps: GameMap[] = [
     name: "6 Tanglewood Drive",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/c/cd/Rooms_Tanglewood.png/revision/latest/scale-to-width-down/900?cb=20260304162818",
+      "https://static.wikia.nocookie.net/phasmophobia/images/c/cd/Rooms_Tanglewood.png/revision/latest/scale-to-width-down/2000?cb=20260304162818",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/6_Tanglewood_Drive",
   },
   {
@@ -36,7 +42,7 @@ export const maps: GameMap[] = [
     name: "42 Edgefield Road",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/8/8f/Rooms_Edgefield.png/revision/latest/scale-to-width-down/900?cb=20251112081146",
+      "https://static.wikia.nocookie.net/phasmophobia/images/8/8f/Rooms_Edgefield.png/revision/latest/scale-to-width-down/2000?cb=20251112081146",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/42_Edgefield_Road",
   },
   {
@@ -44,7 +50,7 @@ export const maps: GameMap[] = [
     name: "10 Ridgeview Court",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/5/51/Rooms_Ridgeview.png/revision/latest/scale-to-width-down/900?cb=20251112081251",
+      "https://static.wikia.nocookie.net/phasmophobia/images/5/51/Rooms_Ridgeview.png/revision/latest/scale-to-width-down/2000?cb=20251112081251",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/10_Ridgeview_Court",
   },
   {
@@ -52,7 +58,7 @@ export const maps: GameMap[] = [
     name: "Nell's Diner",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/b/bd/Rooms_Nells_Diner.png/revision/latest/scale-to-width-down/900?cb=20260304165821",
+      "https://static.wikia.nocookie.net/phasmophobia/images/b/bd/Rooms_Nells_Diner.png/revision/latest/scale-to-width-down/2000?cb=20260304165821",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Nell%27s_Diner",
   },
   {
@@ -60,7 +66,7 @@ export const maps: GameMap[] = [
     name: "Grafton Farmhouse",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/3/37/Rooms_Grafton.png/revision/latest/scale-to-width-down/900?cb=20260304164443",
+      "https://static.wikia.nocookie.net/phasmophobia/images/3/37/Rooms_Grafton.png/revision/latest/scale-to-width-down/2000?cb=20260304164443",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Grafton_Farmhouse",
   },
   {
@@ -68,7 +74,7 @@ export const maps: GameMap[] = [
     name: "13 Willow Street",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/f/f6/Rooms_Willow.png/revision/latest/scale-to-width-down/900?cb=20260721141136",
+      "https://static.wikia.nocookie.net/phasmophobia/images/f/f6/Rooms_Willow.png/revision/latest/scale-to-width-down/2000?cb=20260721141136",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/13_Willow_Street",
   },
   {
@@ -76,7 +82,7 @@ export const maps: GameMap[] = [
     name: "Camp Woodwind",
     size: "small",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/7/78/Rooms_Camp_Woodwind.png/revision/latest/scale-to-width-down/900?cb=20260304161942",
+      "https://static.wikia.nocookie.net/phasmophobia/images/7/78/Rooms_Camp_Woodwind.png/revision/latest/scale-to-width-down/2000?cb=20260304161942",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Camp_Woodwind",
   },
 
@@ -86,7 +92,7 @@ export const maps: GameMap[] = [
     name: "Point Hope",
     size: "medium",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/1/11/Rooms_Point_Hope.png/revision/latest/scale-to-width-down/900?cb=20260304174758",
+      "https://static.wikia.nocookie.net/phasmophobia/images/1/11/Rooms_Point_Hope.png/revision/latest/scale-to-width-down/2000?cb=20260304174758",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Point_Hope",
   },
   {
@@ -94,7 +100,7 @@ export const maps: GameMap[] = [
     name: "Bleasdale Farmhouse",
     size: "medium",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/0/03/Rooms_Bleasdale.png/revision/latest/scale-to-width-down/900?cb=20260304165159",
+      "https://static.wikia.nocookie.net/phasmophobia/images/0/03/Rooms_Bleasdale.png/revision/latest/scale-to-width-down/2000?cb=20260304165159",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Bleasdale_Farmhouse",
   },
   {
@@ -102,7 +108,7 @@ export const maps: GameMap[] = [
     name: "Sunny Meadows Restricted",
     size: "medium",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/b/b4/Rooms_SM_Restricted_Restricted.png/revision/latest/scale-to-width-down/900?cb=20260802210415",
+      "https://static.wikia.nocookie.net/phasmophobia/images/b/b4/Rooms_SM_Restricted_Restricted.png/revision/latest/scale-to-width-down/2000?cb=20260802210415",
     wikiUrl:
       "https://phasmophobia.fandom.com/wiki/Sunny_Meadows_Mental_Institution#Sunny_Meadows_Mental_Institution_-_Restricted",
   },
@@ -111,7 +117,7 @@ export const maps: GameMap[] = [
     name: "Prison",
     size: "medium",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/0/04/Rooms_Prison.png/revision/latest/scale-to-width-down/900?cb=20251112081931",
+      "https://static.wikia.nocookie.net/phasmophobia/images/0/04/Rooms_Prison.png/revision/latest/scale-to-width-down/2000?cb=20251112081931",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Prison",
   },
   {
@@ -119,7 +125,7 @@ export const maps: GameMap[] = [
     name: "Maple Lodge Campsite",
     size: "medium",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/b/bc/Rooms_Maple_Lodge.png/revision/latest/scale-to-width-down/900?cb=20260304171147",
+      "https://static.wikia.nocookie.net/phasmophobia/images/b/bc/Rooms_Maple_Lodge.png/revision/latest/scale-to-width-down/2000?cb=20260304171147",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Maple_Lodge_Campsite",
   },
 
@@ -129,7 +135,7 @@ export const maps: GameMap[] = [
     name: "Brownstone High School",
     size: "large",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/0/02/Rooms_Brownstone_High_School.png/revision/latest/scale-to-width-down/900?cb=20251112082402",
+      "https://static.wikia.nocookie.net/phasmophobia/images/0/02/Rooms_Brownstone_High_School.png/revision/latest/scale-to-width-down/2000?cb=20251112082402",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Brownstone_High_School",
   },
   {
@@ -137,7 +143,7 @@ export const maps: GameMap[] = [
     name: "Sunny Meadows (full/unrestricted)",
     size: "large",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/a/ae/Rooms_Sunny_Meadows.png/revision/latest/scale-to-width-down/900?cb=20260802212553",
+      "https://static.wikia.nocookie.net/phasmophobia/images/a/ae/Rooms_Sunny_Meadows.png/revision/latest/scale-to-width-down/2000?cb=20260802212553",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Sunny_Meadows_Mental_Institution",
   },
 ];

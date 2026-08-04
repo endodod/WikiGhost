@@ -82,29 +82,38 @@ export function GuidesView() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-5 px-4 py-4 sm:px-6 lg:flex-row lg:items-start">
-      {guides.length > 1 && (
-        <nav className="flex shrink-0 flex-col gap-1 lg:w-56">
-          {guides.map((g) => (
-            <button
-              key={g.id}
-              onClick={() => setActiveId(g.id)}
-              className={cn(
-                "flex items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition",
-                g.id === active.id
-                  ? "bg-accent-strong text-white"
-                  : "text-muted hover:bg-surface-2 hover:text-foreground"
-              )}
-            >
-              <BookOpen className="mt-0.5 size-3.5 shrink-0" />
-              {g.title}
-            </button>
-          ))}
-        </nav>
-      )}
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-5 px-4 py-4 sm:px-6">
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-bold text-foreground">Guides</h1>
+        <p className="text-sm text-muted">
+          Step-by-step strategies and quick reference guides.
+        </p>
+      </div>
 
-      <div className="min-w-0 flex-1 rounded-xl border border-surface-border bg-surface p-4 sm:p-6">
-        <GuideContent guide={active} />
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+        {guides.length > 1 && (
+          <nav className="flex shrink-0 flex-col gap-1 lg:w-56">
+            {guides.map((g) => (
+              <button
+                key={g.id}
+                onClick={() => setActiveId(g.id)}
+                className={cn(
+                  "flex items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition",
+                  g.id === active.id
+                    ? "bg-accent-strong text-white"
+                    : "text-muted hover:bg-surface-2 hover:text-foreground"
+                )}
+              >
+                <BookOpen className="mt-0.5 size-3.5 shrink-0" />
+                {g.title}
+              </button>
+            ))}
+          </nav>
+        )}
+
+        <div className="min-w-0 flex-1 rounded-xl border border-surface-border bg-surface p-4 sm:p-6">
+          <GuideContent guide={active} />
+        </div>
       </div>
     </div>
   );

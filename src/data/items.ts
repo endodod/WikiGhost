@@ -13,7 +13,7 @@ export interface EquipmentItem {
   image?: string;
   wikiUrl: string;
   tiers?: EquipmentTier[];
-  /** Used instead of `tiers` for items without a clean tier table (e.g. Sound Recorder). */
+  /** Extra clarifying note shown above the tier table (e.g. UV Light's charge-time correction). */
   note?: string;
   /** May contain **bold** spans. */
   bestPick: string;
@@ -23,6 +23,8 @@ export interface TruckItem {
   id: string;
   name: string;
   function: string;
+  /** Real image URL, or omitted to show a placeholder that links out to the official wiki page. */
+  image?: string;
   wikiUrl: string;
 }
 
@@ -365,9 +367,17 @@ export const equipment: EquipmentItem[] = [
     image:
       "https://static.wikia.nocookie.net/phasmophobia/images/4/43/SoundRecorder_T3.png/revision/latest/scale-to-width-down/500?cb=20250704193014",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Sound_Recorder",
-    note:
-      "The wiki doesn't list a meters-based tier breakdown for this one the way it does the Parabolic Mic; the practical tier differences are pickup sensitivity and audio clarity, improving each tier.",
-    bestPick: "**Tier III** for the clearest unique-sound captures, especially for Perfect Investigation sound evidence.",
+    tiers: [
+      { tier: "I", stats: "3m range, electronic", unlock: "Lvl 4" },
+      { tier: "II", stats: "5m range, display screen, electronic", unlock: "Lvl 39" },
+      {
+        tier: "III",
+        stats: "5m range, display screen, distance + directional indicator, electronic",
+        unlock: "Lvl 60",
+      },
+    ],
+    bestPick:
+      "**Tier III.** Same 5m range as T2, but adds a distance and directional indicator that turns the sound meter into something you can actually navigate by — very close to how the Parabolic Mic's top tier works.",
   },
   {
     id: "sound-sensor",
@@ -406,14 +416,62 @@ export const equipment: EquipmentItem[] = [
 ];
 
 export const truckEquipment: TruckItem[] = [
-  { id: "computer", name: "Computer", function: "View onsite Video Camera feeds.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Computer" },
-  { id: "objective-board", name: "Objective Board", function: "Displays the 4 objectives for the contract.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Objective_Board" },
-  { id: "sanity-monitor", name: "Sanity Monitor", function: "Real-time sanity readout for every player.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Sanity_Monitor" },
-  { id: "setup-timer", name: "Setup Timer", function: "Counts down the setup phase before the ghost can hunt.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Setup_Timer" },
-  { id: "site-activity-monitor", name: "Site Activity Monitor", function: "Shows a spike whenever the ghost acts — high spikes = events/hunts.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Site_Activity_Monitor" },
-  { id: "site-map", name: "Site Map", function: "Overview map of the investigation location.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Site_Map" },
-  { id: "sound-monitor", name: "Sound Monitor", function: "Connects to placed Sound Sensors.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Sound_Monitor" },
-  { id: "watch", name: "Watch", function: "Worn item — shows time and sanity. No tiers.", wikiUrl: "https://phasmophobia.fandom.com/wiki/Watch" },
+  {
+    id: "computer",
+    name: "Computer",
+    function: "View onsite Video Camera feeds.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/0/02/Computer.png/revision/latest/scale-to-width-down/500?cb=20250627163211",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Computer",
+  },
+  {
+    id: "objective-board",
+    name: "Objective Board",
+    function: "Displays the 4 objectives for the contract.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/7/7f/ObjectiveBoard.png/revision/latest/scale-to-width-down/500?cb=20250627175457",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Objective_Board",
+  },
+  {
+    id: "sanity-monitor",
+    name: "Sanity Monitor",
+    function: "Real-time sanity readout for every player.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/b/b9/Sanity_monitor_0.6.png/revision/latest/scale-to-width-down/500?cb=20220411120049",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Sanity_Monitor",
+  },
+  {
+    id: "setup-timer",
+    name: "Setup Timer",
+    function: "Counts down the setup phase before the ghost can hunt.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/8/8d/SetupTimer.png/revision/latest/scale-to-width-down/500?cb=20250627162053",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Setup_Timer",
+  },
+  {
+    id: "site-activity-monitor",
+    name: "Site Activity Monitor",
+    function: "Shows a spike whenever the ghost acts — high spikes = events/hunts.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/8/80/Site_activity_monitor_0.6.png/revision/latest/scale-to-width-down/500?cb=20220408034106",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Site_Activity_Monitor",
+  },
+  {
+    id: "site-map",
+    name: "Site Map",
+    function: "Overview map of the investigation location.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/1/13/Site_map_0.6.png/revision/latest/scale-to-width-down/500?cb=20220408034152",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Site_Map",
+  },
+  {
+    id: "sound-monitor",
+    name: "Sound Monitor",
+    function: "Connects to placed Sound Sensors.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/5/5a/Sound_monitor_0.6.png/revision/latest/scale-to-width-down/500?cb=20220408034224",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Sound_Monitor",
+  },
+  {
+    id: "watch",
+    name: "Watch",
+    function: "Worn item — shows time and sanity. No tiers.",
+    image: "https://static.wikia.nocookie.net/phasmophobia/images/0/02/WatchModel.png/revision/latest/scale-to-width-down/500?cb=20260506171700",
+    wikiUrl: "https://phasmophobia.fandom.com/wiki/Watch",
+  },
 ];
 
 export const consumablesNote =
@@ -424,7 +482,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "music-box",
     name: "Music Box",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/a/a3/Tanglewood-Music2.png/revision/latest/scale-to-width-down/600?cb=20260303141624",
+      "https://static.wikia.nocookie.net/phasmophobia/images/5/5f/Music_box_display.jpg/revision/latest/scale-to-width-down/600?cb=20230131144318",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Music_Box",
     sections: [
       {
@@ -445,7 +503,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "ouija-board",
     name: "Ouija Board",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/f/fb/Ouija_edgefield_utility.png/revision/latest/scale-to-width-down/600?cb=20211225042627",
+      "https://static.wikia.nocookie.net/phasmophobia/images/2/2f/Ouija_Board_New.png/revision/latest/scale-to-width-down/600?cb=20211210172553",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Ouija_Board",
     sections: [
       {
@@ -477,7 +535,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "haunted-mirror",
     name: "Haunted Mirror",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/e/e8/Grafton-Mirror.png/revision/latest/scale-to-width-down/600?cb=20250812121932",
+      "https://static.wikia.nocookie.net/phasmophobia/images/7/7b/Cursed_Mirror.jpg/revision/latest/scale-to-width-down/600?cb=20220303041525",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Haunted_Mirror",
     sections: [
       { heading: "Effect", body: "Raise it to peer directly into the Ghost Room from wherever you are." },
@@ -495,7 +553,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "summoning-circle",
     name: "Summoning Circle",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/5/5f/Willow-Circle.png/revision/latest/scale-to-width-down/600?cb=20231212014526",
+      "https://static.wikia.nocookie.net/phasmophobia/images/d/de/Sc_new1.jpg/revision/latest/scale-to-width-down/600?cb=20231230161505",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Summoning_Circle",
     sections: [
       {
@@ -516,7 +574,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "tarot-cards",
     name: "Tarot Cards",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/0/07/Maple-rework-tarot-cards.png/revision/latest/scale-to-width-down/600?cb=20211210181436",
+      "https://static.wikia.nocookie.net/phasmophobia/images/a/a7/Tarot_Cards.png/revision/latest/scale-to-width-down/600?cb=20211210181436",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Tarot_Cards",
     sections: [
       {
@@ -563,7 +621,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "voodoo-doll",
     name: "Voodoo Doll",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/6/69/Prison-Doll.png/revision/latest/scale-to-width-down/600?cb=20220307220436",
+      "https://static.wikia.nocookie.net/phasmophobia/images/e/e2/Voodoo_Doll_New.jpg/revision/latest/scale-to-width-down/600?cb=20211210173413",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Voodoo_Doll",
     sections: [
       {
@@ -585,7 +643,7 @@ export const cursedPossessions: CursedPossession[] = [
     id: "monkey-paw",
     name: "Monkey Paw",
     image:
-      "https://static.wikia.nocookie.net/phasmophobia/images/3/39/Sunny_Meadows_Monkey_Paw.png/revision/latest/scale-to-width-down/600?cb=20231212031104",
+      "https://static.wikia.nocookie.net/phasmophobia/images/c/cc/Monkey_Paw.png/revision/latest/scale-to-width-down/600?cb=20230228154004",
     wikiUrl: "https://phasmophobia.fandom.com/wiki/Monkey_Paw",
     sections: [
       {

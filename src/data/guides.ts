@@ -155,6 +155,117 @@ export const guides: Guide[] = [
         "Community discussion frequently lists Yurei, Spirit, and Shade alongside this group too — but by this point in the flow those three have already been handled by earlier tests (the door test, the smudge-cooldown test, and the same-room-hunt test respectively). What's left standing after all of that really is close to a coin flip. At that point: pick one, and treat it as an educated guess rather than a certainty.",
     },
   },
+  {
+    id: "perfect-investigation",
+    title: "Perfect Investigation",
+    summary:
+      "Every unique-media stamp, every objective, and the bone — the full checklist for the top payout on a contract.",
+    intro: [
+      "To land the full Perfect Investigation bonus (extra cash + 50 XP), you need all four of the following in the same contract: the correct ghost identified, all 3 optional objectives complete, the bone collected, and the journal filled with only Unique media.",
+      "\"Unique\" means the first-ever capture of that specific evidence category in the contract — a second photo of the same category registers as a *Duplicate* and won't count toward the bonus.",
+    ],
+    stages: [
+      {
+        heading: "Stage 1 — The Four Requirements",
+        items: [
+          {
+            title: "1. Correctly identify the ghost",
+            body: "Circle the right ghost in the journal before the contract ends.",
+          },
+          {
+            title: "2. Complete all 3 optional objectives",
+            body: "Not just the mandatory \"find the ghost\" — all three randomly-picked objectives for the contract.",
+          },
+          {
+            title: "3. Find and collect the Bone",
+            body: "Every contract has exactly one — check garages, basements, and attics first. Picking it up and photographing it are two separate things — do both.",
+          },
+          {
+            title: "4. Fill the journal with only Unique media",
+            body: "5 Unique photos, 5 Unique videos, 3 Unique sounds — Duplicates don't count toward any of the three totals.",
+          },
+        ],
+      },
+      {
+        heading: "Stage 2 — Media Checklist by Device",
+        intro: "Aim for a spread across distinct categories rather than repeating the same easy shot:",
+        items: [
+          {
+            title: "Photo Camera — need 5 Unique",
+            body: "Good spread to target:",
+            bullets: [
+              "The Ghost (during an event/hunt) — best single-value shot",
+              "The Bone",
+              "The cursed possession that spawned",
+              "A UV Fingerprint or Footprint",
+              "An EMF Level 5 reading on the reader",
+              "Ghost Writing in the book",
+              "A burned Crucifix",
+              "A Dead Body (if a teammate has died)",
+              "An object mid-levitation (\"Interaction\")",
+            ],
+          },
+          {
+            title: "Video Camera — need 5 Unique",
+            body: "Good spread to target:",
+            bullets: [
+              "The Ghost manifesting or hunting (biggest reward)",
+              "Disturbed Salt",
+              "A Door moving on its own",
+              "Ghost Orbs",
+              "A Motion Sensor being triggered",
+              "A light flickering or exploding",
+              "Ghost Writing in progress",
+              "A burned Crucifix",
+            ],
+          },
+          {
+            title: "Sound Recorder — need 3 Unique",
+            body: "Good spread to target:",
+            bullets: [
+              "A Spirit Box response",
+              "A paranormal sound (groan/laugh/talk/whisper/scream)",
+              "A burning Crucifix",
+              "An EMF Level 5 reading",
+              "Ghost Writing being written",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Stage 3 — Practical Run Order",
+        items: [
+          {
+            title: "1. Sweep for the favourite room",
+            body: "Do initial EMF/Spirit Box/DOTS sweeps to find the favourite room and lock in evidence.",
+          },
+          {
+            title: "2. Bank the easy Unique trio first",
+            body: "Grab the easy, low-risk Unique photo/video/sound trio (bone, cursed possession, EMF reading) before doing anything risky.",
+          },
+          {
+            title: "3. Force a ghost event",
+            body: "Force one with Tarot Cards / Music Box / Summoning Circle / low sanity to bank the Ghost photo, Ghost video, and a paranormal sound in one go.",
+          },
+          {
+            title: "4. Set up a Crucifix + Incense chokepoint",
+            body: "This can knock out \"prevent a hunt,\" \"cleanse with incense,\" \"repel with incense,\" and \"escape a hunt\" objectives together if they're in the pool.",
+          },
+          {
+            title: "5. Sweep the remaining categories",
+            body: "Pick up remaining Video/Sound categories (salt, doors, motion sensor, Spirit Box) opportunistically while doing the above.",
+          },
+        ],
+      },
+    ],
+    closing: {
+      heading: "Before You Call It",
+      intro: "One last pass before ending the contract:",
+      bullets: [
+        "Double-check the journal tab — a full grid of Unique media, all objectives ticked, correct ghost circled, and the bone in your inventory.",
+      ],
+    },
+  },
 ];
 
 export function getGuideById(id: string): Guide | undefined {

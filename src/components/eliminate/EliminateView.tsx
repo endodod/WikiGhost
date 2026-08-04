@@ -26,7 +26,12 @@ const initialEvidenceStates: Record<Evidence, EvidenceState> = Object.fromEntrie
   EVIDENCE_TYPES.map((ev) => [ev, "unknown"])
 ) as Record<Evidence, EvidenceState>;
 
-export function EliminateView() {
+interface EliminateViewProps {
+  /** Jumps to the given ghost's full entry in the Ghost Wiki tab. */
+  onViewInWiki?: (ghostId: string) => void;
+}
+
+export function EliminateView({ onViewInWiki }: EliminateViewProps = {}) {
   const [evidenceStates, setEvidenceStates] = useState(initialEvidenceStates);
   const [givenEvidenceCount, setGivenEvidenceCount] = useState<EvidenceCount>(3);
   const [speedBucket, setSpeedBucket] = useState<SpeedBucket | null>(null);
@@ -181,7 +186,12 @@ export function EliminateView() {
       </div>
 
       {selectedGhost && (
-        <GhostDetail ghost={selectedGhost} onClose={() => setSelectedGhost(null)} variant="compact" />
+        <GhostDetail
+          ghost={selectedGhost}
+          onClose={() => setSelectedGhost(null)}
+          variant="compact"
+          onViewInWiki={onViewInWiki ? () => onViewInWiki(selectedGhost.id) : undefined}
+        />
       )}
     </div>
   );

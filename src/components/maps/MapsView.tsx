@@ -19,11 +19,15 @@ export function MapsView() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-4 sm:px-6">
-      <div className="rounded-xl border border-surface-border bg-surface p-4 text-xs text-muted">
-        <p>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-bold text-foreground">Map Wiki</h1>
+        <p className="text-sm text-muted">
           Phasmophobia currently has 14 maps: 7 small, 5 medium, 2 large. Each map has a randomized weather type, a
           fixed light limit, and its own set of rooms with one designated Ghost Room. Exceeding a map&rsquo;s light
           limit trips the fuse box.
+        </p>
+        <p className="text-sm text-muted">
+          Map floor-plan images are sourced from zero-network — pls dont sue me.
         </p>
       </div>
 
@@ -31,7 +35,6 @@ export function MapsView() {
         <div key={size} className="flex flex-col gap-3">
           <div className="flex flex-col gap-0.5">
             <h2 className="text-sm font-bold uppercase tracking-wide text-accent">{SIZE_LABELS[size]}</h2>
-            <p className="text-xs text-muted">Light limit: {LIGHT_LIMITS[size]}</p>
           </div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {items.map((map) => (

@@ -2,7 +2,7 @@
 
 import { DetailModal, DetailSection } from "@/components/shared/DetailModal";
 import { WikiImage } from "@/components/shared/WikiImage";
-import { LIGHT_LIMITS, SIZE_LABELS, type GameMap } from "@/data/maps";
+import { LIGHT_LIMITS, SIZE_LABELS_SINGULAR, type GameMap } from "@/data/maps";
 import { ExternalLink } from "lucide-react";
 
 interface MapDetailProps {
@@ -15,6 +15,7 @@ export function MapDetail({ map, onClose }: MapDetailProps) {
     <DetailModal
       title={map.name}
       onClose={onClose}
+      size="xl"
       headerExtra={
         <a
           href={map.wikiUrl}
@@ -27,13 +28,20 @@ export function MapDetail({ map, onClose }: MapDetailProps) {
         </a>
       }
     >
-      <WikiImage src={map.image} alt={map.name} wikiUrl={map.wikiUrl} className="mb-1 h-56 w-full rounded-lg" />
+      <WikiImage
+        src={map.image}
+        alt={map.name}
+        wikiUrl={map.wikiUrl}
+        fit="contain"
+        zoomable
+        className="mb-1 h-[65vh] w-full rounded-lg"
+      />
 
       <DetailSection title="Overview">
         <ul className="space-y-1 text-sm text-foreground/90">
           <li className="flex justify-between gap-3">
             <span className="text-muted">Size</span>
-            <span className="font-medium">{SIZE_LABELS[map.size]}</span>
+            <span className="font-medium">{SIZE_LABELS_SINGULAR[map.size]}</span>
           </li>
           <li className="flex justify-between gap-3">
             <span className="text-muted">Light limit</span>

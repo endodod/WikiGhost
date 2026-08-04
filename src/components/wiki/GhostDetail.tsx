@@ -4,15 +4,18 @@ import { DetailModal, DetailSection } from "@/components/shared/DetailModal";
 import { EvidenceBadge } from "@/components/shared/EvidenceBadge";
 import { SpeedClipButton } from "@/components/shared/SpeedClipButton";
 import type { Ghost } from "@/lib/types";
+import { BookOpen } from "lucide-react";
 
 interface GhostDetailProps {
   ghost: Ghost;
   onClose: () => void;
   /** "compact" shows only evidence/hunt sanity/hunt speed plus the top 3 identifiers — used by Find My Ghost. */
   variant?: "full" | "compact";
+  /** Compact-only: jumps to this ghost's full entry in the Ghost Wiki tab. */
+  onViewInWiki?: () => void;
 }
 
-export function GhostDetail({ ghost, onClose, variant = "full" }: GhostDetailProps) {
+export function GhostDetail({ ghost, onClose, variant = "full", onViewInWiki }: GhostDetailProps) {
   const compact = variant === "compact";
 
   const behaviorMeta = [
@@ -22,7 +25,22 @@ export function GhostDetail({ ghost, onClose, variant = "full" }: GhostDetailPro
   ].filter((m): m is string => Boolean(m));
 
   return (
-    <DetailModal title={ghost.name} onClose={onClose}>
+    <DetailModal
+      title={ghost.name}
+      onClose={onClose}
+      headerExtra={
+        compact && onViewInWiki ? (
+          <button
+            onClick={onViewInWiki}
+            title="View this ghost's full entry in the Ghost Wiki"
+            className="flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-medium text-muted transition hover:bg-surface-2 hover:text-foreground"
+          >
+            <BookOpen className="size-3.5" />
+            Ghost Wiki
+          </button>
+        ) : undefined
+      }
+    >
       <DetailSection title="Evidence">
         <div className="flex flex-wrap gap-2">
           {ghost.evidences.map((ev) => (

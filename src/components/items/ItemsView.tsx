@@ -4,8 +4,17 @@ import { CursedPossessionCard } from "@/components/items/CursedPossessionCard";
 import { CursedPossessionDetail } from "@/components/items/CursedPossessionDetail";
 import { EquipmentCard } from "@/components/items/EquipmentCard";
 import { EquipmentDetail } from "@/components/items/EquipmentDetail";
-import { TruckEquipmentList } from "@/components/items/TruckEquipmentList";
-import { consumablesNote, cursedPossessions, equipment, truckEquipment, type CursedPossession, type EquipmentItem } from "@/data/items";
+import { TruckEquipmentCard } from "@/components/items/TruckEquipmentCard";
+import { TruckEquipmentDetail } from "@/components/items/TruckEquipmentDetail";
+import {
+  consumablesNote,
+  cursedPossessions,
+  equipment,
+  truckEquipment,
+  type CursedPossession,
+  type EquipmentItem,
+  type TruckItem,
+} from "@/data/items";
 import { useMemo, useState } from "react";
 
 function SectionHeading({ title, subtitle }: { title: string; subtitle?: string }) {
@@ -19,6 +28,7 @@ function SectionHeading({ title, subtitle }: { title: string; subtitle?: string 
 
 export function ItemsView() {
   const [selectedEquipment, setSelectedEquipment] = useState<EquipmentItem | null>(null);
+  const [selectedTruck, setSelectedTruck] = useState<TruckItem | null>(null);
   const [selectedCursed, setSelectedCursed] = useState<CursedPossession | null>(null);
 
   const starter = useMemo(() => equipment.filter((e) => e.category === "starter"), []);
@@ -26,14 +36,11 @@ export function ItemsView() {
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-4 sm:px-6">
-      <div className="flex flex-col gap-2 rounded-xl border border-surface-border bg-surface p-4 text-xs text-muted">
-        <p>
+      <div className="flex flex-col gap-1">
+        <h1 className="text-lg font-bold text-foreground">Item Wiki</h1>
+        <p className="text-sm text-muted">
           Tier stats come from the Ascension-update rework and community-tested values. Kinetic Games occasionally
           rebalances individual items in later patches — treat exact numbers as close to current rather than gospel.
-        </p>
-        <p>
-          Most tier images aren&rsquo;t hosted here yet — click through to the official wiki page for pictures where
-          a card shows a placeholder.
         </p>
       </div>
 
@@ -57,7 +64,11 @@ export function ItemsView() {
 
       <div className="flex flex-col gap-3">
         <SectionHeading title="Truck Equipment" subtitle="Stationary monitors in the van — always present, no tiers." />
-        <TruckEquipmentList items={truckEquipment} />
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {truckEquipment.map((item) => (
+            <TruckEquipmentCard key={item.id} item={item} onSelect={setSelectedTruck} />
+          ))}
+        </div>
         <p className="text-xs text-muted">{consumablesNote}</p>
       </div>
 
@@ -75,6 +86,9 @@ export function ItemsView() {
 
       {selectedEquipment && (
         <EquipmentDetail item={selectedEquipment} onClose={() => setSelectedEquipment(null)} />
+      )}
+      {selectedTruck && (
+        <TruckEquipmentDetail item={selectedTruck} onClose={() => setSelectedTruck(null)} />
       )}
       {selectedCursed && (
         <CursedPossessionDetail item={selectedCursed} onClose={() => setSelectedCursed(null)} />
