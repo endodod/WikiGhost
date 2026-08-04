@@ -1,6 +1,8 @@
-# Phasmowiki
+# Wikighost
 
-Phasmowiki is a fast, single-page reference and elimination tool for **Phasmophobia**. It's built to be used *while you're playing* — deep-linkable URLs, back-button-aware navigation, keyboard-light interactions, and a "Find My Ghost" tool that narrows down the culprit as you feed it evidence, sanity, speed, and behavioral tells.
+Wikighost is a fast, single-page reference and elimination tool for horror/investigation games, starting with **Phasmophobia**. It's built to be used *while you're playing* — deep-linkable URLs, back-button-aware navigation, keyboard-light interactions, and a "Find My Ghost" tool that narrows down the culprit as you feed it evidence, sanity, speed, and behavioral tells.
+
+**Abnormality** and **The Other Side** are planned next — the game selector and app shell are already built to support multiple games, so adding one is a matter of filling in its data and swapping out the "coming soon" placeholder.
 
 The app is statically exported (`output: "export"`), so the whole site is pre-rendered HTML/JS with no server required at runtime.
 
@@ -45,7 +47,7 @@ Longer-form strategy walkthroughs with step-by-step chapters, e.g.:
 Ghost names inside guide text are auto-linked to their wiki entries.
 
 ### Game selector
-A game switcher in the header for Phasmophobia and two other titles (Abnormality, The Other Side) that are wired up as "coming soon" placeholders, so the app can grow beyond a single game later.
+A game switcher in the header for Phasmophobia and the two titles planned next — Abnormality and The Other Side — currently wired up as "coming soon" placeholders. The app shell is game-agnostic by design, so bringing a new game online is a matter of adding its data and views, not restructuring the app.
 
 ### Navigation model
 All tab switches, game switches, and detail-view selections (a selected ghost, item, map, or guide chapter) are synced to the URL query string via a custom history-backed hook ([useUrlParams](src/lib/useUrlParams.ts)). This means:
