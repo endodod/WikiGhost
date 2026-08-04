@@ -119,7 +119,7 @@ export function EliminateView() {
         </div>
       </div>
 
-      <div className="sticky top-[var(--app-header-h)] z-20 bg-background/95 backdrop-blur">
+      <div>
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6">
           <div className="flex flex-col gap-4 rounded-xl border border-surface-border bg-surface p-4 lg:flex-row lg:items-stretch lg:gap-6">
             <div className="flex flex-col gap-3 lg:flex-1">
