@@ -71,7 +71,7 @@ export function SpeedFinderTool({ candidates, onHighlightMatches }: SpeedFinderT
         <div className="flex items-center gap-2">
           <button
             onClick={handleTap}
-            className="flex items-center gap-1.5 rounded-full bg-accent-strong px-3 py-1.5 text-xs font-semibold text-white transition hover:opacity-90 active:scale-95"
+            className="flex min-h-11 items-center gap-1.5 rounded-full bg-accent-strong px-4 py-2 text-xs font-semibold text-white transition select-none hover:opacity-90 active:scale-95 sm:min-h-0 sm:px-3 sm:py-1.5"
           >
             <Timer className="size-3.5" />
             Tap to Hunt Footsteps
@@ -80,7 +80,7 @@ export function SpeedFinderTool({ candidates, onHighlightMatches }: SpeedFinderT
             onClick={handleReset}
             disabled={taps.length === 0}
             title="Reset taps"
-            className="rounded-full p-1.5 text-muted transition hover:bg-surface hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-muted transition hover:bg-surface hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40 sm:size-7"
           >
             <RotateCcw className="size-3.5" />
           </button>
@@ -94,7 +94,7 @@ export function SpeedFinderTool({ candidates, onHighlightMatches }: SpeedFinderT
             </span>
             <button
               onClick={handleApply}
-              className="flex items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1 text-[11px] font-semibold text-accent transition hover:bg-accent/25"
+              className="flex min-h-8 items-center gap-1 rounded-full bg-accent/15 px-2.5 py-1.5 text-[11px] font-semibold text-accent transition hover:bg-accent/25 sm:min-h-0 sm:py-1"
             >
               <Target className="size-3" />
               Highlight {matches.length} match{matches.length === 1 ? "" : "es"}

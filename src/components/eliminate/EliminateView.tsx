@@ -19,7 +19,7 @@ import {
   type SpeedBucket,
 } from "@/lib/types";
 import { useUrlParams } from "@/lib/useUrlParams";
-import { RotateCcw } from "lucide-react";
+import { ChevronDown, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const initialEvidenceStates: Record<Evidence, EvidenceState> = Object.fromEntries(
@@ -37,6 +37,9 @@ export function EliminateView() {
   const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
   const [crossedOutIds, setCrossedOutIds] = useState<string[]>([]);
   const [speedFinderResetKey, setSpeedFinderResetKey] = useState(0);
+  // Mobile-only: lets the evidence/sanity/speed panel be tucked away to free up screen
+  // space for the result list. Always expanded on desktop, regardless of this state.
+  const [filtersOpen, setFiltersOpen] = useState(true);
 
   const foundCount = Object.values(evidenceStates).filter((s) => s === "found").length;
 
@@ -55,6 +58,11 @@ export function EliminateView() {
   const verdicts = useMemo(() => evaluateAll(ghosts, state), [state]);
   const filtersActive =
     hasActiveFilters(state) || highlightedIds.length > 0 || crossedOutIds.length > 0;
+  // Shown on the collapsed mobile panel header so it's clear filters are still applied.
+  const panelActiveCount =
+    EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] !== "unknown").length +
+    (sanityObserved !== null ? 1 : 0) +
+    (speedBucket !== null ? 1 : 0);
 
   const remainingCandidates = useMemo(
     () =>
@@ -121,43 +129,69 @@ export function EliminateView() {
 
       <div>
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6">
-          <div className="flex flex-col gap-4 rounded-xl border border-surface-border bg-surface p-4 lg:flex-row lg:items-stretch lg:gap-6">
-            <div className="flex flex-col gap-3 lg:flex-1">
-              <EvidenceCountSelector value={givenEvidenceCount} onChange={setGivenEvidenceCount} />
-
-              <EvidenceToggleGroup
-                states={evidenceStates}
-                onToggleFound={toggleFoundEvidence}
-                onToggleRuledOut={toggleRuledOutEvidence}
-              />
-
-              <div className="flex flex-col gap-3 border-t border-surface-border pt-3">
-                <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
-                <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
-              </div>
-            </div>
-
-            <div className="flex flex-col items-center gap-3 lg:w-72 lg:shrink-0 lg:items-stretch lg:border-l lg:border-surface-border lg:pl-6">
-              <button
-                onClick={reset}
-                disabled={!filtersActive}
-                title="Resets every filter, tell, and highlight across the whole tool"
-                className={cn(
-                  "flex shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition",
-                  filtersActive
-                    ? "border-surface-border bg-surface-2 text-foreground hover:border-red-500/40 hover:text-red-400"
-                    : "cursor-not-allowed border-surface-border text-muted/50"
+          <div className="rounded-xl border border-surface-border bg-surface p-4">
+            <button
+              onClick={() => setFiltersOpen((o) => !o)}
+              className="flex min-h-9 w-full items-center justify-between gap-2 sm:hidden"
+            >
+              <span className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                Evidence &amp; Filters
+                {panelActiveCount > 0 && (
+                  <span className="rounded-full bg-accent-strong px-1.5 py-0.5 text-[10px] font-semibold text-white">
+                    {panelActiveCount}
+                  </span>
                 )}
-              >
-                <RotateCcw className="size-3.5" />
-                Reset All
-              </button>
-
-              <SpeedFinderTool
-                key={speedFinderResetKey}
-                candidates={remainingCandidates}
-                onHighlightMatches={applySpeedMatches}
+              </span>
+              <ChevronDown
+                className={cn("size-4 text-muted transition-transform", filtersOpen && "rotate-180")}
               />
+            </button>
+
+            <div
+              className={cn(
+                "mt-3 flex-col gap-4 sm:mt-0 sm:flex lg:flex-row lg:items-stretch lg:gap-6",
+                filtersOpen ? "flex" : "hidden"
+              )}
+            >
+              <div className="flex flex-col gap-3 lg:flex-1">
+                <EvidenceCountSelector value={givenEvidenceCount} onChange={setGivenEvidenceCount} />
+
+                <EvidenceToggleGroup
+                  states={evidenceStates}
+                  onToggleFound={toggleFoundEvidence}
+                  onToggleRuledOut={toggleRuledOutEvidence}
+                />
+
+                <div className="flex flex-col gap-3 border-t border-surface-border pt-3">
+                  <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
+                  <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center gap-3 lg:w-72 lg:shrink-0 lg:items-stretch lg:border-l lg:border-surface-border lg:pl-6">
+                <div className="order-1 w-full sm:order-2">
+                  <SpeedFinderTool
+                    key={speedFinderResetKey}
+                    candidates={remainingCandidates}
+                    onHighlightMatches={applySpeedMatches}
+                  />
+                </div>
+
+                <button
+                  onClick={reset}
+                  disabled={!filtersActive}
+                  title="Resets every filter, tell, and highlight across the whole tool"
+                  className={cn(
+                    "order-2 flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-medium transition sm:order-1 sm:min-h-0 sm:py-1.5",
+                    filtersActive
+                      ? "border-surface-border bg-surface-2 text-foreground hover:border-red-500/40 hover:text-red-400"
+                      : "cursor-not-allowed border-surface-border text-muted/50"
+                  )}
+                >
+                  <RotateCcw className="size-3.5" />
+                  Reset All
+                </button>
+              </div>
             </div>
           </div>
         </div>

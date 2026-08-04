@@ -37,7 +37,7 @@ export function DetailModal({ title, onClose, children, headerExtra, size = "md"
             {headerExtra}
             <button
               onClick={onClose}
-              className="rounded-full p-1.5 text-muted transition hover:bg-surface-2 hover:text-foreground"
+              className="rounded-full p-2 text-muted transition hover:bg-surface-2 hover:text-foreground"
               aria-label="Close"
             >
               <X className="size-5" />
@@ -45,7 +45,12 @@ export function DetailModal({ title, onClose, children, headerExtra, size = "md"
           </div>
         </div>
 
-        <div className="overflow-y-auto px-5 py-2">{children}</div>
+        <div
+          className="overflow-y-auto px-5 py-2"
+          style={{ paddingBottom: "calc(0.5rem + env(safe-area-inset-bottom))" }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );

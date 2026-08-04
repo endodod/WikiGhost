@@ -138,7 +138,7 @@ export function GuidesView() {
       </div>
 
       <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-        <div className="sticky top-[calc(var(--app-header-h)+16px)] flex max-h-[calc(100dvh-var(--app-header-h)-32px)] shrink-0 flex-col gap-4 overflow-y-auto lg:w-56">
+        <div className="flex shrink-0 flex-col gap-4 lg:sticky lg:top-[calc(var(--app-header-h)+16px)] lg:max-h-[calc(100dvh-var(--app-header-h)-32px)] lg:w-56 lg:overflow-y-auto">
           <nav className="flex flex-col gap-1">
             {guides.length > 1 && (
               <span className="flex items-center gap-1.5 px-3 pb-1 text-xs font-semibold uppercase tracking-wide text-muted">
@@ -152,7 +152,7 @@ export function GuidesView() {
                   <button
                     onClick={() => selectGuide(g.id)}
                     className={cn(
-                      "flex items-start gap-2 rounded-lg px-3 py-2 text-left text-sm transition",
+                      "flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition sm:min-h-0 sm:items-start",
                       g.id === active.id
                         ? "bg-accent-strong text-white"
                         : "text-muted hover:bg-surface-2 hover:text-foreground"
@@ -169,14 +169,14 @@ export function GuidesView() {
                       <button
                         key={i}
                         onClick={() => selectChapter(String(i))}
-                        className="rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground"
+                        className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
                       >
                         {stage.heading}
                       </button>
                     ))}
                     <button
                       onClick={() => selectChapter(CLOSING_CHAPTER)}
-                      className="rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground"
+                      className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
                     >
                       {active.closing.heading}
                     </button>

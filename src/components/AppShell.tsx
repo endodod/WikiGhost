@@ -46,12 +46,12 @@ export function AppShell() {
   }, [activeTabId]);
 
   const TABS: GameTab[] = [
-    { id: "find", label: "Find My Ghost", icon: ListChecks, content: <EliminateView /> },
-    { id: "wiki", label: "Ghost Wiki", icon: Ghost, content: <WikiView /> },
-    { id: "items", label: "Item Wiki", icon: Package, content: <ItemsView /> },
-    { id: "maps", label: "Map Wiki", icon: Map, content: <MapsView /> },
-    { id: "objectives", label: "Objectives Wiki", icon: ClipboardList, content: <ObjectivesView /> },
-    { id: "guides", label: "Guides", icon: BookOpen, content: <GuidesView /> },
+    { id: "find", label: "Find My Ghost", shortLabel: "Find", icon: ListChecks, content: <EliminateView /> },
+    { id: "wiki", label: "Ghost Wiki", shortLabel: "Ghosts", icon: Ghost, content: <WikiView /> },
+    { id: "items", label: "Item Wiki", shortLabel: "Items", icon: Package, content: <ItemsView /> },
+    { id: "maps", label: "Map Wiki", shortLabel: "Maps", icon: Map, content: <MapsView /> },
+    { id: "objectives", label: "Objectives Wiki", shortLabel: "Goals", icon: ClipboardList, content: <ObjectivesView /> },
+    { id: "guides", label: "Guides", shortLabel: "Guides", icon: BookOpen, content: <GuidesView /> },
   ];
 
   return (

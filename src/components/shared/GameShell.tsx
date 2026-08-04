@@ -8,6 +8,8 @@ import { useEffect, useRef, type ReactNode } from "react";
 export interface GameTab {
   id: string;
   label: string;
+  /** Shorter label for the mobile bottom tab bar's tight columns; falls back to `label`. */
+  shortLabel?: string;
   icon: LucideIcon;
   content: ReactNode;
 }
@@ -55,7 +57,7 @@ export function GameShell({ tabs, activeId, onActiveIdChange, headerEnd, content
 
         <div className="flex min-w-0 items-center justify-end gap-2 overflow-x-auto">
           {tabs.length > 0 && (
-            <nav className="flex shrink-0 items-center gap-0.5 rounded-full border border-surface-border bg-surface-2 p-0.5">
+            <nav className="hidden shrink-0 items-center gap-0.5 rounded-full border border-surface-border bg-surface-2 p-0.5 sm:flex">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 return (
@@ -79,7 +81,7 @@ export function GameShell({ tabs, activeId, onActiveIdChange, headerEnd, content
         </div>
       </header>
 
-      <main className="flex flex-1 flex-col">
+      <main className="flex flex-1 flex-col pb-[calc(60px+env(safe-area-inset-bottom))] sm:pb-0">
         {content ??
           tabs.map((tab) => (
             <div key={tab.id} className={cn("flex flex-1 flex-col", tab.id !== active?.id && "hidden")}>
@@ -87,6 +89,35 @@ export function GameShell({ tabs, activeId, onActiveIdChange, headerEnd, content
             </div>
           ))}
       </main>
+
+      {tabs.length > 0 && (
+        <nav
+          className="fixed inset-x-0 bottom-0 z-30 grid border-t border-surface-border bg-background/95 backdrop-blur sm:hidden"
+          style={{
+            gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
+            paddingBottom: "env(safe-area-inset-bottom)",
+          }}
+        >
+          {tabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = tab.id === active?.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => onActiveIdChange(tab.id)}
+                className={cn(
+                  "flex min-w-0 flex-col items-center justify-center gap-0.5 py-2 text-[10px] font-semibold transition",
+                  isActive ? "text-accent" : "text-muted"
+                )}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon className="size-5" strokeWidth={isActive ? 2.5 : 2} />
+                <span className="truncate px-0.5 leading-none">{tab.shortLabel ?? tab.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+      )}
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { clueCategories, clues } from "@/data/clues";
 import { cn } from "@/lib/cn";
 import { ChevronDown, Search, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 interface TellsChecklistProps {
   activeIds: string[];
@@ -14,6 +14,14 @@ export function TellsChecklist({ activeIds, onToggle }: TellsChecklistProps) {
   const [open, setOpen] = useState(true);
   const [query, setQuery] = useState("");
   const [openCategory, setOpenCategory] = useState<string | null>(null);
+
+  // Starts collapsed on mobile to save space — desktop keeps its expanded default.
+  // Checked post-mount (not in the initial state) so server/client markup still match;
+  // this is a one-off default-seeding read, not an ongoing sync, so it's fine as an effect.
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (window.matchMedia("(max-width: 639px)").matches) setOpen(false);
+  }, []);
 
   const searching = query.trim().length > 0;
 
@@ -104,12 +112,12 @@ export function TellsChecklist({ activeIds, onToggle }: TellsChecklistProps) {
                       <ul className="flex flex-col gap-1 px-3 pb-3">
                         {items.map((clue) => (
                           <li key={clue.id}>
-                            <label className="flex cursor-pointer items-start gap-2 rounded-md px-1.5 py-1 text-sm text-foreground/90 hover:bg-surface-2">
+                            <label className="flex min-h-10 cursor-pointer items-center gap-2 rounded-md px-1.5 py-2 text-sm text-foreground/90 hover:bg-surface-2 sm:min-h-0 sm:items-start sm:py-1">
                               <input
                                 type="checkbox"
                                 checked={activeIds.includes(clue.id)}
                                 onChange={() => onToggle(clue.id)}
-                                className="mt-0.5 size-4 shrink-0 accent-accent-strong"
+                                className="size-4 shrink-0 accent-accent-strong sm:mt-0.5"
                               />
                               <span>{clue.label}</span>
                             </label>

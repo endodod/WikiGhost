@@ -32,12 +32,15 @@ export function GhostResultCard({
 
   return (
     <div
-      onClick={onToggleHighlight}
+      // Tap cycles plain -> highlighted -> hidden -> plain, so both states are reachable
+      // with a single tap (no right-click needed on touch devices). Right-click stays as
+      // a desktop shortcut straight to "hide".
+      onClick={highlighted || crossedOut ? onToggleCrossOut : onToggleHighlight}
       onContextMenu={(e) => {
         e.preventDefault();
         onToggleCrossOut();
       }}
-      title="Click to highlight · Right-click to hide"
+      title="Tap to cycle highlight/hide · Right-click to hide directly"
       className={cn(
         "flex w-full cursor-pointer flex-col gap-2 rounded-xl border p-3.5 text-left transition select-none",
         struckThrough

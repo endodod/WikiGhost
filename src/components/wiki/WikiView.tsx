@@ -39,7 +39,7 @@ export function WikiView() {
         <div className="flex shrink-0 items-center gap-1 rounded-lg border border-surface-border bg-surface-2 p-1">
           <button
             onClick={() => setView("grid")}
-            className={`rounded-md p-1.5 transition ${
+            className={`flex size-10 items-center justify-center rounded-md transition sm:size-8 ${
               view === "grid" ? "bg-accent-strong text-white" : "text-muted hover:text-foreground"
             }`}
             aria-label="Grid view"
@@ -48,7 +48,7 @@ export function WikiView() {
           </button>
           <button
             onClick={() => setView("table")}
-            className={`rounded-md p-1.5 transition ${
+            className={`flex size-10 items-center justify-center rounded-md transition sm:size-8 ${
               view === "table" ? "bg-accent-strong text-white" : "text-muted hover:text-foreground"
             }`}
             aria-label="Table view"

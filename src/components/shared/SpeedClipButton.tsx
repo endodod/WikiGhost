@@ -39,7 +39,7 @@ export function SpeedClipButton({ speed, durationSec = 5 }: SpeedClipButtonProps
       onClick={handleClick}
       disabled={playing}
       title={`Play an approximate footstep-cadence clip for ${speed} m/s (synthesized, not in-game audio)`}
-      className="flex shrink-0 items-center gap-1 rounded-md p-1 text-muted transition hover:bg-surface-2 hover:text-foreground disabled:opacity-60"
+      className="flex size-8 shrink-0 items-center justify-center gap-1 rounded-md p-1 text-muted transition hover:bg-surface-2 hover:text-foreground disabled:opacity-60"
     >
       <Volume2 className={playing ? "size-3.5 animate-pulse text-accent" : "size-3.5"} />
     </button>

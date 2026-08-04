@@ -20,7 +20,7 @@ export function SpeedFilter({ value, onChange }: SpeedFilterProps) {
             key={b.id}
             onClick={() => onChange(value === b.id ? null : b.id)}
             className={cn(
-              "rounded-full px-3 py-1.5 text-xs font-medium ring-1 transition",
+              "min-h-9 rounded-full px-3 py-2 text-xs font-medium ring-1 transition sm:min-h-0 sm:py-1.5",
               value === b.id
                 ? "bg-accent-strong text-white ring-accent-strong"
                 : "bg-surface-2 text-muted ring-surface-border hover:text-foreground"

@@ -28,9 +28,12 @@
 
 html {
   color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
   background:
     radial-gradient(ellipse 80% 60% at 50% -10%, color-mix(in oklab, var(--accent) 10%, transparent), transparent),
     repeating-linear-gradient(
