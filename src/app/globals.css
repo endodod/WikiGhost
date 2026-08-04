@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+:root {
+  --app-header-h: 96px;
+  --background: #0a0b0f;
+  --surface: #13151c;
+  --surface-2: #1a1d27;
+  --surface-border: #262a38;
+  --foreground: #e9eaf2;
+  --muted: #8b93a7;
+  --accent: #a78bfa;
+  --accent-strong: #8b5cf6;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-border: var(--surface-border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-strong: var(--accent-strong);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  min-height: 100dvh;
+}
+
+* {
+  scrollbar-color: var(--surface-2) var(--background);
+}
+
+.eliminated-ghost {
+  filter: grayscale(0.85);
+  opacity: 0.55;
+}
+
+.strike-line {
+  position: relative;
+}
+
+.strike-line::after {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 50%;
+  height: 2px;
+  background: #ef4444;
+  transform: translateY(-50%) rotate(-2deg);
+  border-radius: 2px;
+  opacity: 0.85;
+}
