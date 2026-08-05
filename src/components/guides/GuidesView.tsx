@@ -4,8 +4,8 @@ import { guides, type Guide } from "@/data/guides";
 import { cn } from "@/lib/cn";
 import { renderGuideText } from "@/lib/ghostLinker";
 import { useUrlParams } from "@/lib/useUrlParams";
-import { BookOpen } from "lucide-react";
-import { useEffect } from "react";
+import { BookOpen, ChevronDown } from "lucide-react";
+import { useEffect, useState } from "react";
 
 function stageId(index: number) {
   return `guide-stage-${index}`;
@@ -100,6 +100,14 @@ export function GuidesView() {
   const { values, push } = useUrlParams(["guide", "chapter", "tab"]);
   const active = guides.find((g) => g.id === values.guide) ?? guides[0];
 
+  // Strict single-open accordion: exactly one guide's chapter list is ever shown. `null` means
+  // "no manual override — follow whichever guide is active" (derived fresh each render, so it
+  // never fights the active guide changing underneath it); "" means "explicitly collapsed, even
+  // though a guide is active"; any other value is a specific guide peeked via its chevron without
+  // navigating to it — either way, opening/peeking a guide always closes every other one.
+  const [expandOverride, setExpandOverride] = useState<string | null>(null);
+  const expandedGuideId = expandOverride === null ? active.id : expandOverride || null;
+
   // A chapter link click already scrolls immediately; this also restores scroll
   // position when `chapter` changes via back/forward instead of a click.
   useEffect(() => {
@@ -107,12 +115,17 @@ export function GuidesView() {
     document.getElementById(chapterSectionId(values.chapter))?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [values.chapter]);
 
-  function selectGuide(id: string) {
-    push({ guide: id, chapter: null });
+  function toggleGuideExpanded(id: string) {
+    setExpandOverride(expandedGuideId === id ? "" : id);
   }
 
-  function selectChapter(chapter: string) {
-    push({ chapter });
+  function selectGuide(id: string) {
+    push({ guide: id, chapter: null });
+    setExpandOverride(null);
+  }
+
+  function selectChapterOf(guideId: string, chapter: string) {
+    push({ guide: guideId, chapter });
   }
 
   function viewGhost(ghostId: string) {
@@ -146,44 +159,56 @@ export function GuidesView() {
                 Guides
               </span>
             )}
-            {guides.map((g) => (
-              <div key={g.id} className="flex flex-col gap-1">
-                {guides.length > 1 && (
-                  <button
-                    onClick={() => selectGuide(g.id)}
-                    className={cn(
-                      "flex min-h-11 items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition sm:min-h-0 sm:items-start",
-                      g.id === active.id
-                        ? "bg-accent-strong text-white"
-                        : "text-muted hover:bg-surface-2 hover:text-foreground"
-                    )}
-                  >
-                    <BookOpen className="mt-0.5 size-3.5 shrink-0" />
-                    {g.title}
-                  </button>
-                )}
-
-                {g.id === active.id && (
-                  <div className="flex flex-col gap-1 py-1 pl-5">
-                    {active.stages.map((stage, i) => (
+            {guides.map((g) => {
+              const expanded = expandedGuideId === g.id;
+              return (
+                <div key={g.id} className="flex flex-col gap-1">
+                  {guides.length > 1 && (
+                    <div className="flex items-center gap-1">
                       <button
-                        key={i}
-                        onClick={() => selectChapter(String(i))}
+                        onClick={() => selectGuide(g.id)}
+                        className={cn(
+                          "flex min-h-11 flex-1 items-center gap-2 rounded-lg px-3 py-2 text-left text-sm transition sm:min-h-0 sm:items-start",
+                          g.id === active.id
+                            ? "bg-accent-strong text-white"
+                            : "text-muted hover:bg-surface-2 hover:text-foreground"
+                        )}
+                      >
+                        <BookOpen className="mt-0.5 size-3.5 shrink-0" />
+                        {g.title}
+                      </button>
+                      <button
+                        onClick={() => toggleGuideExpanded(g.id)}
+                        title={expanded ? "Collapse chapters" : "Expand chapters"}
+                        className="flex size-8 shrink-0 items-center justify-center rounded-lg text-muted transition hover:bg-surface-2 hover:text-foreground"
+                      >
+                        <ChevronDown className={cn("size-3.5 transition-transform", expanded && "rotate-180")} />
+                      </button>
+                    </div>
+                  )}
+
+                  {expanded && (
+                    <div className="flex flex-col gap-1 py-1 pl-5">
+                      {g.stages.map((stage, i) => (
+                        <button
+                          key={i}
+                          onClick={() => selectChapterOf(g.id, String(i))}
+                          className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
+                        >
+                          {stage.heading}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => selectChapterOf(g.id, CLOSING_CHAPTER)}
                         className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
                       >
-                        {stage.heading}
+                        {g.closing.heading}
                       </button>
-                    ))}
-                    <button
-                      onClick={() => selectChapter(CLOSING_CHAPTER)}
-                      className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
-                    >
-                      {active.closing.heading}
-                    </button>
-                  </div>
-                )}
-              </div>
-            ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </nav>
         </div>
 

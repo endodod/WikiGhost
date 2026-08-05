@@ -8,6 +8,7 @@ import { ResultList } from "@/components/eliminate/ResultList";
 import { SanityFilter } from "@/components/eliminate/SanityFilter";
 import { SpeedFilter } from "@/components/eliminate/SpeedFilter";
 import { SpeedFinderTool } from "@/components/eliminate/SpeedFinderTool";
+import { Stopwatch } from "@/components/shared/Stopwatch";
 import { TellsChecklist } from "@/components/eliminate/TellsChecklist";
 import { getGhostById, ghosts } from "@/data/ghosts";
 import { cn } from "@/lib/cn";
@@ -162,9 +163,12 @@ export function EliminateView() {
                   onToggleRuledOut={toggleRuledOutEvidence}
                 />
 
-                <div className="flex flex-col gap-3 border-t border-surface-border pt-3">
+                <div className="flex flex-col gap-3 border-t border-surface-border pt-3 sm:flex-row sm:items-center">
                   <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
                   <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
+                  <div className="w-full sm:w-56 sm:shrink-0">
+                    <Stopwatch />
+                  </div>
                 </div>
               </div>
 

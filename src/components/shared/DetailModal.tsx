@@ -27,17 +27,17 @@ export function DetailModal({ title, onClose, children, headerExtra, size = "md"
     <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/70 backdrop-blur-sm sm:items-center sm:p-4">
       <div className="absolute inset-0" onClick={onClose} aria-hidden />
       <div
-        className={`relative flex max-h-[92dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-surface-border bg-surface shadow-2xl sm:rounded-2xl ${
+        className={`relative flex max-h-[95dvh] w-full flex-col overflow-hidden rounded-t-2xl border border-surface-border bg-surface shadow-2xl sm:rounded-2xl ${
           size === "xl" ? "sm:max-w-4xl" : "sm:max-w-lg"
         }`}
       >
-        <div className="flex items-center justify-between gap-3 border-b border-surface-border px-5 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-surface-border px-5 py-4">
           <h2 className="text-lg font-bold text-foreground">{title}</h2>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex flex-wrap items-center gap-3">
             {headerExtra}
             <button
               onClick={onClose}
-              className="rounded-full p-2 text-muted transition hover:bg-surface-2 hover:text-foreground"
+              className="shrink-0 rounded-full p-2 text-muted transition hover:bg-surface-2 hover:text-foreground"
               aria-label="Close"
             >
               <X className="size-5" />

@@ -22,7 +22,7 @@ export function GameSelector({ value, onChange }: GameSelectorProps) {
         <button
           key={g.id}
           onClick={() => onChange(g.id)}
-          title={g.id === "phasmophobia" ? g.label : `${g.label} — coming soon`}
+          title={g.id === "abnormality" ? `${g.label} — coming soon` : g.label}
           className={cn(
             "shrink-0 rounded-full px-2.5 py-2 text-[11px] font-semibold transition sm:px-2 sm:py-1",
             value === g.id ? "bg-accent-strong text-white" : "text-muted hover:text-foreground"

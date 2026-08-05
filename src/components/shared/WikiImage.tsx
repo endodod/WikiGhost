@@ -12,6 +12,8 @@ interface WikiImageProps {
   fit?: "cover" | "contain";
   /** When true, the image supports scroll-wheel zoom and click-drag panning instead of being static. */
   zoomable?: boolean;
+  /** Shows the "scroll to zoom · drag to pan" hint overlay. Default true; turn off for small thumbnails where the label doesn't fit. */
+  hint?: boolean;
 }
 
 const MIN_SCALE = 1;
@@ -21,7 +23,7 @@ const MAX_SCALE = 4;
  * Renders a real image when one is available; otherwise (or on load failure) falls back to a
  * placeholder that links out to the official wiki page instead of showing a broken image.
  */
-export function WikiImage({ src, alt, wikiUrl, className = "", fit = "cover", zoomable = false }: WikiImageProps) {
+export function WikiImage({ src, alt, wikiUrl, className = "", fit = "cover", zoomable = false, hint = true }: WikiImageProps) {
   const [failed, setFailed] = useState(false);
   const [scale, setScale] = useState(1);
   const [pos, setPos] = useState({ x: 0, y: 0 });
@@ -127,10 +129,12 @@ export function WikiImage({ src, alt, wikiUrl, className = "", fit = "cover", zo
             Reset
           </button>
         )}
-        <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] font-medium text-white">
-          <ZoomIn className="size-3" />
-          Scroll to zoom · drag to pan
-        </span>
+        {hint && (
+          <span className="flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 text-[10px] font-medium text-white">
+            <ZoomIn className="size-3" />
+            Scroll to zoom · drag to pan
+          </span>
+        )}
       </div>
     </div>
   );

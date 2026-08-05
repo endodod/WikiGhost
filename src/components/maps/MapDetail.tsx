@@ -1,6 +1,6 @@
 "use client";
 
-import { DetailModal, DetailSection } from "@/components/shared/DetailModal";
+import { DetailModal } from "@/components/shared/DetailModal";
 import { WikiImage } from "@/components/shared/WikiImage";
 import { LIGHT_LIMITS, SIZE_LABELS_SINGULAR, type GameMap } from "@/data/maps";
 import { ExternalLink } from "lucide-react";
@@ -17,15 +17,25 @@ export function MapDetail({ map, onClose }: MapDetailProps) {
       onClose={onClose}
       size="xl"
       headerExtra={
-        <a
-          href={map.wikiUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          title="View on the official wiki"
-          className="rounded-full p-1.5 text-muted transition hover:bg-surface-2 hover:text-foreground"
-        >
-          <ExternalLink className="size-4" />
-        </a>
+        <>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+            <span className="text-muted">
+              Size <span className="font-medium text-foreground">{SIZE_LABELS_SINGULAR[map.size]}</span>
+            </span>
+            <span className="text-muted">
+              Light limit <span className="font-mono font-medium text-foreground">{LIGHT_LIMITS[map.size]}</span>
+            </span>
+          </div>
+          <a
+            href={map.wikiUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on the official wiki"
+            className="shrink-0 rounded-full p-1.5 text-muted transition hover:bg-surface-2 hover:text-foreground"
+          >
+            <ExternalLink className="size-4" />
+          </a>
+        </>
       }
     >
       <WikiImage
@@ -34,21 +44,8 @@ export function MapDetail({ map, onClose }: MapDetailProps) {
         wikiUrl={map.wikiUrl}
         fit="contain"
         zoomable
-        className="mb-1 h-[65vh] w-full rounded-lg"
+        className="h-[65vh] w-full rounded-lg"
       />
-
-      <DetailSection title="Overview">
-        <ul className="space-y-1 text-sm text-foreground/90">
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Size</span>
-            <span className="font-medium">{SIZE_LABELS_SINGULAR[map.size]}</span>
-          </li>
-          <li className="flex justify-between gap-3">
-            <span className="text-muted">Light limit</span>
-            <span className="font-mono font-medium">{LIGHT_LIMITS[map.size]}</span>
-          </li>
-        </ul>
-      </DetailSection>
     </DetailModal>
   );
 }

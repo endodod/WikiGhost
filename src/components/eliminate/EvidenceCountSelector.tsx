@@ -22,7 +22,7 @@ export function EvidenceCountSelector({ value, onChange }: EvidenceCountSelector
             onClick={() => onChange(n)}
             title={`${n} evidence type${n === 1 ? "" : "s"} shown this contract`}
             className={cn(
-              "size-9 rounded-full text-xs font-semibold ring-1 transition sm:size-7",
+              "rounded-full px-3 py-2 text-xs font-semibold ring-1 transition sm:px-2.5 sm:py-1",
               value === n
                 ? "bg-accent-strong text-white ring-accent-strong"
                 : "bg-surface-2 text-muted ring-surface-border hover:text-foreground"

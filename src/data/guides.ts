@@ -35,6 +35,188 @@ export interface Guide {
 
 export const guides: Guide[] = [
   {
+    id: "basics",
+    title: "Basics: Objective, Maps & Surviving Hunts",
+    summary:
+      "The foundational loop — what to actually do on a contract, how maps constrain you, and how to live through a hunt instead of guessing at it.",
+    intro: [],
+    stages: [
+      {
+        heading: "Objective, Evidence & How to Gather It",
+        items: [
+          {
+            title: "Objective",
+            body: "Each contract drops you at a haunted location with one goal: figure out which of the 27 ghost types is haunting it, survive long enough to do so, and get out. You do this by collecting evidence with equipment from the truck, logging it in your Journal, and cross-referencing against the ghost list. Optional side objectives (photos, tasks like \"get evidence with X device\") give bonus money/XP but aren't required to finish the contract.",
+          },
+          {
+            title: "The 7 Evidence Types",
+            body: "Every ghost has exactly 3 of these 7 fixed evidence types:",
+            bullets: [
+              "**EMF Level 5** — sweep with the EMF Reader near ghost interactions/objects; a level 5 spike is evidence.",
+              "**D.O.T.S. Projector** — place it in a room the ghost frequents; watch for a silhouette passing through the light grid.",
+              "**Ultraviolet (UV)** — shine the UV Light on doors, floors, light switches; look for glowing fingerprints/footprints.",
+              "**Freezing Temperatures** — thermometer reads below 0°C/32°F in a room the ghost is active in.",
+              "**Ghost Orb** — only visible through a Video Camera/Video Feed/Head Gear — floating orbs near the ghost.",
+              "**Ghost Writing** — place a Ghost Writing Book and leave the room; the ghost may write in it.",
+              "**Spirit Box** — ask a question in a dark room; a reply confirms this evidence.",
+            ],
+          },
+          {
+            title: "Difficulty & Evidence Availability",
+            body: "On Amateur/Intermediate/Professional, all 3 of a ghost's evidence types are obtainable. On Nightmare, only 2 of the 3 are available (1 is randomly hidden). On Insanity, only 1 of the 3 is available. This is why higher difficulties force you to rely more on ghost behavior than pure evidence.",
+          },
+          {
+            title: "Practical Gathering Order",
+            body: "A sequence that works for most groups:",
+            bullets: [
+              "**Spirit Box first** — quick to test, immediately splits the ghost list into \"responds\" vs. \"doesn't.\"",
+              "**EMF Reader sweep** — most ghosts interact with objects early in a contract.",
+              "Set up a **camera + Ghost Writing Book** in the suspected ghost room and leave — passive evidence collection while you do other things.",
+              "**UV sweep** on doors/light switches once you've narrowed down the ghost room.",
+              "**Thermometer** — carry it around, especially into the suspected ghost room.",
+            ],
+          },
+          {
+            title: "Common Beginner Mistake",
+            body: "Assuming one piece of evidence identifies the ghost. Multiple ghosts usually share any single evidence type — you need to actually narrow it down using all three, or use behavioral tells (speed, hunt sanity threshold, unique quirks) when evidence is hidden on higher difficulties.",
+          },
+        ],
+      },
+      {
+        heading: "Maps: Hiding Spots, Cursed Possessions & Breaker/Light Limits",
+        items: [
+          {
+            title: "Map Sizes (14 total)",
+            body: "14 maps split across three sizes:",
+            bullets: [
+              "**Small (7):** 6 Tanglewood Drive, 42 Edgefield Road, 10 Ridgeview Court, Nell's Diner, Grafton Farmhouse, 13 Willow Street, Camp Woodwind.",
+              "**Medium (5):** Point Hope, Bleasdale Farmhouse, Sunny Meadows Restricted, Prison, Maple Lodge Campsite.",
+              "**Large (2):** Brownstone High School, Sunny Meadows (full).",
+            ],
+          },
+          {
+            title: "Light Limits Per Map Size (Breaker/Fuse Box)",
+            body: "Every map has a maximum number of interactable lights that can be on simultaneously. Exceed it and the fuse box instantly trips, killing all lights and switches:",
+            bullets: [
+              "**Small:** 9 lights max.",
+              "**Medium:** 8 lights max.",
+              "**Large:** 7 lights max.",
+            ],
+          },
+          {
+            title: "Fuse Box (Breaker) Location",
+            body: "The fuse box spawns in one of several fixed possible locations per map (varies by map — e.g. Point Hope has 4 possible spots along its vertical layout, Sunny Meadows has 5, Prison has one tied to the Infirmary Hallway sub-room). It's randomized per contract from that map's fixed pool, so check the known spots on your map's wiki page each contract. Turning the breaker on/off controls whether lights function and affects some ghost behaviors (e.g. Jinn only reaches its 2.5 m/s speed boost while the fuse box is on).",
+          },
+          {
+            title: "Cursed Possessions",
+            body: "On default difficulties (except Insanity), one Cursed Possession spawns per contract, drawn randomly from all 7 types (Ouija Board, Summoning Circle, Haunted Mirror, Music Box, Voodoo Doll, Monkey Paw, Tarot Cards).",
+            bullets: [
+              "Each possession has one dedicated, fixed spawn location per map — only which item shows up is random, not where. On most maps the 7 possible spots are scattered around the building; on Brownstone High School, Prison, and Sunny Meadows, all 7 are clustered in a single room/area (e.g. Sunny Meadows: the Chapel; Prison: the entrance hallway; Brownstone: the lobby).",
+              "Using one is optional — no objective strictly requires it — but they're useful for forcing information (Ouija Board answers, Music Box location pings) at the risk of triggering a cursed hunt, which ignores sanity thresholds and hunt cooldowns entirely.",
+            ],
+          },
+          {
+            title: "Hiding Spots",
+            body: "Two tiers of safety, plus a map-specific quirk worth knowing:",
+            bullets: [
+              "**Official hiding spots** (closets, lockers, mini-tents) are the only truly safe option — the ghost cannot physically enter them, and can only force the door open if it already detected you inside. On higher difficulties, some official spots get blocked by clutter or locked doors, so scout your route during setup.",
+              "**Unofficial hiding spots** (behind furniture, in dead-end rooms) exist on maps like Prison but are riskier — they don't block the ghost, they just rely on breaking line of sight.",
+              "Rooms not separated by visible walls are still treated as separate rooms mechanically on several maps (e.g. 10 Ridgeview Court's entrance area is actually 3 separate rooms: Foyer, Dining Room, Living Room) — this matters for the Ouija Board's room answers and for crucifix placement.",
+            ],
+          },
+        ],
+      },
+      {
+        heading: "Surviving Hunts",
+        items: [
+          {
+            title: "Ghost Event vs. Hunt — How to Tell Them Apart",
+            body: "Both can look similar at first (flickering lights, ghost sounds), but they differ in every meaningful way:",
+            bullets: [
+              "**Exit doors:** stay unlocked during a Ghost Event; lock immediately for a Hunt.",
+              "**Ghost appearance:** can be shadow/mist/see-through during an Event; always the normal physical model during a Hunt.",
+              "**Start:** a Ghost Event starts instantly with no delay; a Hunt has a grace period first (ghost invisible, motionless, cannot see/kill you).",
+              "**Danger:** a Ghost Event cannot kill you; a Hunt can.",
+              "**Activity Monitor:** may or may not spike for an Event; reads level 10 for a Hunt.",
+              "**Doors during the event:** the ghost may slam/lock the room's own door during an Event, but cannot lock room doors that way during a Hunt.",
+            ],
+          },
+          {
+            title: "Grace Period Length",
+            body: "Before the ghost can actually start chasing: Amateur 5s, Intermediate 4s, Professional/Nightmare/Insanity 2–3s, Cursed hunt only 1s. If all exits just locked, use that window to move — don't wait to \"confirm\" it's a hunt.",
+          },
+          {
+            title: "Hunt Sanity Thresholds",
+            body: "Most ghosts hunt once average team sanity (all alive players, inside or outside) drops to 50% or below, with a 10% chance to hunt after each idle-state check (rising to ~1/6 once sanity is 25 points below the threshold). Some ghosts differ significantly:",
+            bullets: [
+              "**Shade** — only 35% threshold (very passive), and never hunts while a player is in its room.",
+              "**Demon** — 70% (hunts early and often).",
+              "**Deogen** — 40%, but always knows every player's location via constant line-of-sight.",
+              "**Yokai** — 80%, but only triggers off voice within 2.5 m of it.",
+              "**Banshee** — uses its individually chosen target's sanity, not team average.",
+            ],
+          },
+          {
+            title: "Preventing a Hunt",
+            body: "A handful of items can stop a hunt attempt outright:",
+            bullets: [
+              "**Crucifix** — stops a hunt attempt if the ghost is within its radius when it tries to hunt (Tier I blocks 1 attempt, Tiers II/III block 2).",
+              "**Incense** — lit within 3–5 m of the ghost (tier-dependent) prevents hunting for 90 seconds (60s for Demon, 180s for Spirit).",
+              "**Smudge sticks** — prevent hunting for 90 seconds after smudging (except cursed hunts).",
+              "None of these work against a cursed hunt except a Tier III crucifix with 2 charges left.",
+            ],
+          },
+          {
+            title: "Detection During a Hunt — What Actually Gives You Away",
+            body: "What the ghost actually tracks once a hunt is live:",
+            bullets: [
+              "**Line of sight (LoS)** — the ghost has 360° vision and can see up to 75 m. It needs a clear view of your hitbox (3 of 6 tracking points, upper+lower). Walls, closed doors, and most furniture block this.",
+              "**Voice** — audible to the ghost within 9 m (same floor) if your voice chat picks it up.",
+              "**Active electronics** in-hand or worn attract the ghost within 7.5 m (same floor) — even silent ones like flashlights or thermometers. Equipment left on the ground does not attract it.",
+              "**Ghost footsteps/vocalizations** are audible to you up to 20 m (12 m for Myling) — useful for tracking where it is.",
+              "Official hiding spots are safe as long as the door stays closed and you were never actually seen entering — the ghost has no memory of your position outside of an active hunt. If it does detect you while hidden, it sets a waypoint just outside and forces the door open on arrival, so timing your entry matters far more than the hiding spot itself.",
+            ],
+          },
+          {
+            title: "Looping",
+            body: "Since the ghost can't clip through walls, obstacles and furniture blocks like tables/shelving are excellent for breaking line of sight repeatedly — a \"loop\" is running a circuit around such an obstacle so the ghost is always at least one corner behind you. This works because:",
+            bullets: [
+              "Base ghost speed is 1.7 m/s; it only accelerates (up to 1.65× base) while it maintains continuous LoS on you, taking up to 13 seconds to reach max speed.",
+              "You walk at 1.6 m/s and can sprint at 3 m/s for 3-second bursts (5s cooldown) — breaking LoS around a corner resets its speed decay (slow, ~65s to fully return to base) and buys room to path toward a real hiding spot or the exit.",
+              "Good loop spots are documented per map (e.g. the dining table and basement shelving in 10 Ridgeview Court) — check your map's wiki page for the best-known loop.",
+            ],
+          },
+          {
+            title: "Ghosts That Ignore Standard LoS Speed Rules",
+            body: "Looping tactics that work on a \"standard\" ghost can fail badly against a handful of exceptions: **Revenant** (1 m/s when it hasn't detected you, but a flat 3 m/s once it has), **Hantu** (faster in cold rooms), **Deogen** (faster the farther away you are, slower up close), **Jinn** (fixed 2.5 m/s with LoS if the fuse box is on and you're >3 m away).",
+          },
+          {
+            title: "Incense During a Hunt",
+            body: "If lit incense successfully \"pings\" the ghost while it's within range, the ghost is blinded for 5 seconds — it can't detect or kill anyone and drops back into a wandering state with a new random waypoint. It doesn't repel the ghost away from you specifically, just resets its awareness, so use the window to actually move, not just stand still.",
+          },
+          {
+            title: "Sound & Other Tells While Hunting",
+            body: "A few passive signals worth knowing:",
+            bullets: [
+              "You can hear your own heartbeat if the ghost is within 10 m and has a clear path to you (no walls/floors/doors between you) — the closer it is, the louder.",
+              "Electronics and lights within 10 m of the ghost (15 m for Raiju) flicker/malfunction — useful for triangulating its position if you have a stereo setup.",
+              "A hunt ends when it kills someone (if Kills extend hunts is off), its timer runs out, or no living players remain in the investigation area. Duration scales with difficulty and map size — e.g. Amateur is 15s on a small map vs. 40s on a large map, Professional/Nightmare/Insanity go up to 30s/50s/1 minute respectively.",
+            ],
+          },
+        ],
+      },
+    ],
+    closing: {
+      heading: "Key Takeaways",
+      bullets: [
+        "Evidence narrows the list; behavior confirms it — lean on tells the moment a difficulty hides evidence from you.",
+        "Know your map's light limit and fuse box pool before you start flipping switches.",
+        "A hunt's grace period is a window to move, not a countdown to verify — if the doors locked, go.",
+        "Looping only works on ghosts with standard LoS acceleration — know the exceptions before you commit to one.",
+      ],
+    },
+  },
+  {
     id: "zero-evidence-walkthrough",
     title: "Zero-Evidence Investigation Walkthrough",
     summary:
