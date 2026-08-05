@@ -3,6 +3,7 @@ import type { TosEvidence } from "@/lib/tos/types";
 
 export interface TosFilterState {
   selected: TosEvidence[];
+  ruledOut: TosEvidence[];
   realCount: number;
   fakeCount: number;
   candles: boolean | null;
@@ -44,6 +45,17 @@ export function evaluateTosGhost(ghost: TosGhost, state: TosFilterState): TosGho
       const matchCount = state.selected.filter((ev) => ghost.evidence.includes(ev)).length;
       if (matchCount < state.realCount) {
         reasons.push(`Only shares ${matchCount} of the ${state.realCount} required real evidence types`);
+      }
+    }
+  }
+
+  // Ruled-out evidence is only reliable proof of absence when all 3 real evidence types are
+  // shown this contract (realCount === 3, no fake evidence mixed in) — below that, ruling
+  // out a type just means it wasn't among the few shown, not that the ghost lacks it.
+  if (state.ruledOut.length > 0 && state.realCount === 3 && state.fakeCount === 0) {
+    for (const ev of state.ruledOut) {
+      if (ghost.evidence.includes(ev)) {
+        reasons.push(`Has ${ev} evidence, which was ruled out`);
       }
     }
   }

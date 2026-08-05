@@ -1,43 +1,87 @@
 import { TosEvidenceBadge } from "@/components/tos/TosEvidenceBadge";
 import { cn } from "@/lib/cn";
 import type { TosGhost } from "@/lib/tos/types";
-import { Droplets, Gauge, Timer } from "lucide-react";
+import { Droplets, Gauge, Info, Timer } from "lucide-react";
 
 interface GhostCardProps {
   ghost: TosGhost;
   onSelect: (ghost: TosGhost) => void;
   highlighted?: boolean;
+  crossedOut?: boolean;
+  /** When provided (together with onToggleCrossOut), the whole card becomes a
+   * left-click-to-highlight / right-click-to-cross-out control, mirroring Phasmophobia's
+   * result cards — selecting the ghost then happens via the name or info button instead. */
+  onToggleHighlight?: () => void;
+  onToggleCrossOut?: () => void;
   /** When set, renders as a ruled-out card — strikethrough name, dimmed evidence, reasons list instead of stats. */
   reasons?: string[];
 }
 
-export function GhostCard({ ghost, onSelect, highlighted = false, reasons }: GhostCardProps) {
+export function GhostCard({
+  ghost,
+  onSelect,
+  highlighted = false,
+  crossedOut = false,
+  onToggleHighlight,
+  onToggleCrossOut,
+  reasons,
+}: GhostCardProps) {
   const eliminated = reasons !== undefined && reasons.length > 0;
+  const struckThrough = eliminated || crossedOut;
+  const interactive = onToggleHighlight !== undefined && onToggleCrossOut !== undefined;
 
   return (
-    <button
-      onClick={() => onSelect(ghost)}
+    <div
+      onClick={interactive ? (highlighted || crossedOut ? onToggleCrossOut : onToggleHighlight) : () => onSelect(ghost)}
+      onContextMenu={
+        interactive
+          ? (e) => {
+              e.preventDefault();
+              onToggleCrossOut?.();
+            }
+          : undefined
+      }
+      title={interactive ? "Tap to cycle highlight/hide · Right-click to hide directly" : undefined}
       className={cn(
-        "group flex flex-col gap-3 rounded-xl border p-4 text-left transition hover:border-accent/50 hover:bg-surface-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-        eliminated
+        "group flex cursor-pointer flex-col gap-3 rounded-xl border p-4 text-left transition select-none",
+        struckThrough
           ? "eliminated-ghost border-surface-border bg-surface/60"
           : highlighted
           ? "border-accent bg-accent/10 shadow-[0_0_0_1px_var(--color-accent)]"
-          : "border-surface-border bg-surface"
+          : "border-surface-border bg-surface hover:border-accent/50 hover:bg-surface-2"
       )}
     >
-      <h3
-        className={cn(
-          "text-base font-semibold transition-colors",
-          eliminated ? "strike-line text-muted" : "text-foreground group-hover:text-accent"
+      <div className="flex items-start justify-between gap-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onSelect(ghost);
+          }}
+          className={cn(
+            "text-left text-base font-semibold transition-colors hover:underline",
+            struckThrough ? "strike-line text-muted" : "text-foreground group-hover:text-accent"
+          )}
+        >
+          {ghost.name}
+        </button>
+
+        {interactive && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onSelect(ghost);
+            }}
+            title="View details"
+            className="shrink-0 rounded-md p-1 text-muted transition hover:bg-surface-2 hover:text-foreground"
+          >
+            <Info className="size-4" />
+          </button>
         )}
-      >
-        {ghost.name}
-      </h3>
+      </div>
 
       <div className="flex flex-wrap gap-1.5">
         {ghost.evidence.map((ev) => (
-          <TosEvidenceBadge key={ev} evidence={ev} size="sm" dimmed={eliminated} />
+          <TosEvidenceBadge key={ev} evidence={ev} size="sm" dimmed={struckThrough} />
         ))}
       </div>
 
@@ -68,6 +112,6 @@ export function GhostCard({ ghost, onSelect, highlighted = false, reasons }: Gho
           </div>
         </>
       )}
-    </button>
+    </div>
   );
 }

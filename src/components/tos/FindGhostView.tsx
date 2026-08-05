@@ -5,7 +5,7 @@ import { GhostCard } from "@/components/tos/GhostCard";
 import { GhostDetail } from "@/components/tos/GhostDetail";
 import { Stopwatch } from "@/components/shared/Stopwatch";
 import { StatFilter } from "@/components/tos/StatFilter";
-import { TosEvidenceBadge } from "@/components/tos/TosEvidenceBadge";
+import { TosEvidenceToggleGroup, type TosEvidenceState } from "@/components/tos/TosEvidenceToggleGroup";
 import { TosSpeedFinderTool } from "@/components/tos/TosSpeedFinderTool";
 import { getTosGhostById, tosGhosts } from "@/data/tos/ghosts";
 import { cn } from "@/lib/cn";
@@ -14,6 +14,10 @@ import { TOS_EVIDENCE_TYPES, type TosEvidence, type TosInteraction } from "@/lib
 import { useUrlParams } from "@/lib/useUrlParams";
 import { ChevronDown, RotateCcw } from "lucide-react";
 import { useMemo, useState } from "react";
+
+const initialTosEvidenceStates: Record<TosEvidence, TosEvidenceState> = Object.fromEntries(
+  TOS_EVIDENCE_TYPES.map((ev) => [ev, "unknown"])
+) as Record<TosEvidence, TosEvidenceState>;
 
 const CANDLES_OPTIONS = [
   { value: true, label: "Blows Out" },
@@ -58,7 +62,7 @@ const COOLDOWN_OPTIONS = [
 export function FindGhostView() {
   const [realCount, setRealCount] = useState(3);
   const [fakeCount, setFakeCount] = useState(0);
-  const [selected, setSelected] = useState<TosEvidence[]>([]);
+  const [evidenceStates, setEvidenceStates] = useState(initialTosEvidenceStates);
   const [candles, setCandles] = useState<boolean | null>(null);
   const [flxPod, setFlxPod] = useState<boolean | null>(null);
   const [lights, setLights] = useState<TosInteraction | null>(null);
@@ -68,6 +72,7 @@ export function FindGhostView() {
   const [holyWater, setHolyWater] = useState<number | null>(null);
   const [cooldown, setCooldown] = useState<number | null>(null);
   const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
+  const [crossedOutIds, setCrossedOutIds] = useState<string[]>([]);
   const [speedFinderResetKey, setSpeedFinderResetKey] = useState(0);
   // Mobile-only: lets the evidence/filters panel be tucked away to free up screen space
   // for the result grid. Always expanded on desktop, regardless of this state.
@@ -79,6 +84,15 @@ export function FindGhostView() {
   const totalShown = realCount + fakeCount;
   const needsFullSet = fakeCount > 0;
 
+  const selected = useMemo(
+    () => TOS_EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "found"),
+    [evidenceStates]
+  );
+  const ruledOutEvidence = useMemo(
+    () => TOS_EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "ruledOut"),
+    [evidenceStates]
+  );
+
   const statFiltersActive =
     candles !== null ||
     flxPod !== null ||
@@ -88,10 +102,16 @@ export function FindGhostView() {
     losSpeed !== null ||
     holyWater !== null ||
     cooldown !== null;
-  const filtersActive = selected.length > 0 || statFiltersActive || highlightedIds.length > 0;
+  const filtersActive =
+    selected.length > 0 ||
+    ruledOutEvidence.length > 0 ||
+    statFiltersActive ||
+    highlightedIds.length > 0 ||
+    crossedOutIds.length > 0;
   // Shown on the collapsed mobile panel header so it's clear filters are still applied.
   const panelActiveCount =
     selected.length +
+    ruledOutEvidence.length +
     [candles, flxPod, lights, radio, speed, losSpeed, holyWater, cooldown].filter((v) => v !== null).length;
 
   function changeRealCount(n: number) {
@@ -104,12 +124,26 @@ export function FindGhostView() {
     setRealCount((r) => Math.min(r, 3 - n));
   }
 
-  function toggleEvidence(ev: TosEvidence) {
-    setSelected((prev) => (prev.includes(ev) ? prev.filter((e) => e !== ev) : [...prev, ev]));
+  function toggleFoundEvidence(ev: TosEvidence) {
+    setEvidenceStates((cur) => ({ ...cur, [ev]: cur[ev] === "found" ? "unknown" : "found" }));
+  }
+
+  function toggleRuledOutEvidence(ev: TosEvidence) {
+    setEvidenceStates((cur) => ({ ...cur, [ev]: cur[ev] === "ruledOut" ? "unknown" : "ruledOut" }));
+  }
+
+  function toggleHighlight(id: string) {
+    setHighlightedIds((cur) => (cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]));
+    setCrossedOutIds((cur) => cur.filter((c) => c !== id));
+  }
+
+  function toggleCrossOut(id: string) {
+    setCrossedOutIds((cur) => (cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]));
+    setHighlightedIds((cur) => cur.filter((c) => c !== id));
   }
 
   function resetAll() {
-    setSelected([]);
+    setEvidenceStates(initialTosEvidenceStates);
     setCandles(null);
     setFlxPod(null);
     setLights(null);
@@ -119,6 +153,7 @@ export function FindGhostView() {
     setHolyWater(null);
     setCooldown(null);
     setHighlightedIds([]);
+    setCrossedOutIds([]);
     setSpeedFinderResetKey((k) => k + 1);
   }
 
@@ -135,6 +170,7 @@ export function FindGhostView() {
     if (evidenceCandidates === null) return null;
     return evaluateAllTosGhosts(tosGhosts, {
       selected,
+      ruledOut: ruledOutEvidence,
       realCount,
       fakeCount,
       candles,
@@ -149,6 +185,7 @@ export function FindGhostView() {
   }, [
     evidenceCandidates,
     selected,
+    ruledOutEvidence,
     realCount,
     fakeCount,
     candles,
@@ -165,7 +202,7 @@ export function FindGhostView() {
     () => verdicts?.filter((v) => !v.eliminated).map((v) => v.ghost) ?? [],
     [verdicts]
   );
-  const ruledOut = useMemo(() => verdicts?.filter((v) => v.eliminated) ?? [], [verdicts]);
+  const ruledOutGhosts = useMemo(() => verdicts?.filter((v) => v.eliminated) ?? [], [verdicts]);
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-4 py-4 sm:px-6">
@@ -212,13 +249,11 @@ export function FindGhostView() {
                 : `${realCount} real evidence, ${fakeCount} false — select all ${totalShown} readings you found, then any ghost sharing at least ${realCount} of them with your selection is still a candidate.`}
             </p>
 
-            <div className="flex flex-wrap gap-2">
-              {TOS_EVIDENCE_TYPES.map((ev) => (
-                <button key={ev} onClick={() => toggleEvidence(ev)}>
-                  <TosEvidenceBadge evidence={ev} dimmed={!selected.includes(ev)} />
-                </button>
-              ))}
-            </div>
+            <TosEvidenceToggleGroup
+              states={evidenceStates}
+              onToggleFound={toggleFoundEvidence}
+              onToggleRuledOut={toggleRuledOutEvidence}
+            />
 
             <div className="flex flex-col gap-4 border-t border-surface-border pt-3">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-evenly">
@@ -321,28 +356,35 @@ export function FindGhostView() {
                   key={ghost.id}
                   ghost={ghost}
                   highlighted={highlightedIds.includes(ghost.id)}
+                  crossedOut={crossedOutIds.includes(ghost.id)}
+                  onToggleHighlight={() => toggleHighlight(ghost.id)}
+                  onToggleCrossOut={() => toggleCrossOut(ghost.id)}
                   onSelect={(g) => push({ tfghost: g.id })}
                 />
               ))}
             </div>
           )}
 
-          {ruledOut.length > 0 && (
+          {ruledOutGhosts.length > 0 && (
             <div>
               <button
                 onClick={() => setShowRuledOut((s) => !s)}
                 className="flex w-full items-center justify-between rounded-lg border border-surface-border bg-surface-2/50 px-3 py-2 text-sm font-medium text-muted transition hover:text-foreground"
               >
-                Ruled Out ({ruledOut.length})
+                Ruled Out ({ruledOutGhosts.length})
                 <ChevronDown className={cn("size-4 transition-transform", showRuledOut && "rotate-180")} />
               </button>
               {showRuledOut && (
                 <div className="mt-2 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {ruledOut.map((v) => (
+                  {ruledOutGhosts.map((v) => (
                     <GhostCard
                       key={v.ghost.id}
                       ghost={v.ghost}
                       reasons={v.reasons}
+                      highlighted={highlightedIds.includes(v.ghost.id)}
+                      crossedOut={crossedOutIds.includes(v.ghost.id)}
+                      onToggleHighlight={() => toggleHighlight(v.ghost.id)}
+                      onToggleCrossOut={() => toggleCrossOut(v.ghost.id)}
                       onSelect={(g) => push({ tfghost: g.id })}
                     />
                   ))}
