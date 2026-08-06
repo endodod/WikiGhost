@@ -263,6 +263,15 @@ export function EliminateView() {
                       <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
                       <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
                     </div>
+
+                    <NextStepPanel
+                      remaining={remainingCandidates}
+                      evidenceStates={evidenceStates}
+                      givenEvidenceCount={givenEvidenceCount}
+                      speedBucket={speedBucket}
+                      sanityObserved={sanityObserved}
+                      activeClueIds={activeClueIds}
+                    />
                   </>
                 )}
               </div>
@@ -323,18 +332,7 @@ export function EliminateView() {
             {zeroEvidenceMode ? (
               <ZeroEvidenceConfirmTells checkedIds={zeroEvidenceCheckedIds} onToggle={toggleZeroEvidenceItem} />
             ) : (
-              <>
-                <NextStepPanel
-                  remaining={remainingCandidates}
-                  evidenceStates={evidenceStates}
-                  givenEvidenceCount={givenEvidenceCount}
-                  speedBucket={speedBucket}
-                  sanityObserved={sanityObserved}
-                  activeClueIds={activeClueIds}
-                />
-
-                <TellsChecklist activeIds={activeClueIds} onToggle={toggleClue} />
-              </>
+              <TellsChecklist activeIds={activeClueIds} onToggle={toggleClue} />
             )}
           </div>
 
