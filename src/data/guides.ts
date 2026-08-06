@@ -3,6 +3,17 @@ export interface GuideItem {
   /** May contain **bold** spans, rendered inline. */
   body: string;
   bullets?: string[];
+  /** Named speed values worth hearing as a footstep-cadence clip (synthesized, not in-game audio). */
+  speeds?: { label: string; value: number }[];
+  /** Reference photo gallery, collapsed by default. */
+  imageGallery?: {
+    label: string;
+    images: { src: string; alt: string }[];
+    /** May contain **bold** spans, shown below the gallery when expanded. */
+    note?: string;
+  };
+  /** Key selecting a purpose-built diagram component to render when expanded — data can't hold JSX. */
+  diagram?: "blink-pattern";
 }
 
 export interface GuideStage {
@@ -29,24 +40,53 @@ export interface Guide {
   summary: string;
   intro: string[];
   stages: GuideStage[];
-  closing: GuideClosing;
+  closing?: GuideClosing;
   sources?: GuideSources;
 }
 
 export const guides: Guide[] = [
   {
     id: "basics",
-    title: "Basics: Objective, Maps & Surviving Hunts",
+    title: "The Basics",
     summary:
       "The foundational loop — what to actually do on a contract, how maps constrain you, and how to live through a hunt instead of guessing at it.",
     intro: [],
     stages: [
       {
+        heading: "The Scenario",
+        items: [
+          {
+            title: "You're the Investigator",
+            body: "Every contract puts you and your team at a real haunted location with exactly one ghost. It's not a jump-scare gimmick — it has consistent rules, a type from a fixed roster, and it will kill you if you get careless.",
+          },
+          {
+            title: "The Ghost Interacts With Its Surroundings",
+            body: "Even when it's not actively hunting, the ghost roams the location and interacts with objects and the environment — flickering lights, opening doors, writing in a book left for it, knocking things over. These interactions are how most evidence gets left behind.",
+          },
+          {
+            title: "It Has a Favorite Room",
+            body: "The ghost is anchored to one room it returns to and is most active in — usually where its evidence and activity concentrate, and where cleanse/scan objectives get done. Finding it early narrows down where to actually set up gear.",
+          },
+          {
+            title: "It Can Hunt You",
+            body: "Beyond roaming, the ghost can enter a hunt: an aggressive state where it actively searches for and tries to kill players. Surviving one is the other half of the job — covered in full in \"Surviving Hunts\" below.",
+          },
+          {
+            title: "Every Ghost Is Unique — Except One",
+            body: "Each of the 30 ghost types has its own evidence set, behavior, and unique tells — no two play exactly alike. The one exception is **The Mimic**, which can copy other ghosts' apparent evidence and quirks, muddying a straight read. Full behavior breakdowns live in the Ghost Wiki and Find My Ghost tabs.",
+          },
+          {
+            title: "Money & Equipment",
+            body: "Completing contracts (and their optional objectives) pays out money and XP, which you spend back at the truck to buy new equipment or upgrade existing gear to higher tiers. Full pricing and tier breakdowns live in the Item Wiki tab.",
+          },
+        ],
+      },
+      {
         heading: "Objective, Evidence & How to Gather It",
         items: [
           {
             title: "Objective",
-            body: "Each contract drops you at a haunted location with one goal: figure out which of the 27 ghost types is haunting it, survive long enough to do so, and get out. You do this by collecting evidence with equipment from the truck, logging it in your Journal, and cross-referencing against the ghost list. Optional side objectives (photos, tasks like \"get evidence with X device\") give bonus money/XP but aren't required to finish the contract.",
+            body: "Each contract drops you at a haunted location with one goal: figure out which of the 30 ghost types is haunting it, survive long enough to do so, and get out. You do this by collecting evidence with equipment from the truck, logging it in your Journal, and cross-referencing against the ghost list. Optional side objectives give bonus money/XP but aren't required to finish the contract — see the Objectives Wiki tab for the full list.",
           },
           {
             title: "The 7 Evidence Types",
@@ -56,7 +96,7 @@ export const guides: Guide[] = [
               "**D.O.T.S. Projector** — place it in a room the ghost frequents; watch for a silhouette passing through the light grid.",
               "**Ultraviolet (UV)** — shine the UV Light on doors, floors, light switches; look for glowing fingerprints/footprints.",
               "**Freezing Temperatures** — thermometer reads below 0°C/32°F in a room the ghost is active in.",
-              "**Ghost Orb** — only visible through a Video Camera/Video Feed/Head Gear — floating orbs near the ghost.",
+              "**Ghost Orb** — only visible through a Video Camera/Video Feed/Head Gear — floating orbs in the ghost room.",
               "**Ghost Writing** — place a Ghost Writing Book and leave the room; the ghost may write in it.",
               "**Spirit Box** — ask a question in a dark room; a reply confirms this evidence.",
             ],
@@ -65,25 +105,12 @@ export const guides: Guide[] = [
             title: "Difficulty & Evidence Availability",
             body: "On Amateur/Intermediate/Professional, all 3 of a ghost's evidence types are obtainable. On Nightmare, only 2 of the 3 are available (1 is randomly hidden). On Insanity, only 1 of the 3 is available. This is why higher difficulties force you to rely more on ghost behavior than pure evidence.",
           },
-          {
-            title: "Practical Gathering Order",
-            body: "A sequence that works for most groups:",
-            bullets: [
-              "**Spirit Box first** — quick to test, immediately splits the ghost list into \"responds\" vs. \"doesn't.\"",
-              "**EMF Reader sweep** — most ghosts interact with objects early in a contract.",
-              "Set up a **camera + Ghost Writing Book** in the suspected ghost room and leave — passive evidence collection while you do other things.",
-              "**UV sweep** on doors/light switches once you've narrowed down the ghost room.",
-              "**Thermometer** — carry it around, especially into the suspected ghost room.",
-            ],
-          },
-          {
-            title: "Common Beginner Mistake",
-            body: "Assuming one piece of evidence identifies the ghost. Multiple ghosts usually share any single evidence type — you need to actually narrow it down using all three, or use behavioral tells (speed, hunt sanity threshold, unique quirks) when evidence is hidden on higher difficulties.",
-          },
         ],
       },
       {
-        heading: "Maps: Hiding Spots, Cursed Possessions & Breaker/Light Limits",
+        heading: "Everything to do with Maps",
+        intro:
+          "See the Map Wiki tab for the full per-map breakdown — exact light limits, fuse box spots and cursed possession locations for each of the 14 maps.",
         items: [
           {
             title: "Map Sizes (14 total)",
@@ -139,6 +166,7 @@ export const guides: Guide[] = [
               "**Danger:** a Ghost Event cannot kill you; a Hunt can.",
               "**Activity Monitor:** may or may not spike for an Event; reads level 10 for a Hunt.",
               "**Doors during the event:** the ghost may slam/lock the room's own door during an Event, but cannot lock room doors that way during a Hunt.",
+              "**Light switches:** togglable by players during an Event; locked out entirely once a Hunt starts.",
             ],
           },
           {
@@ -206,68 +234,77 @@ export const guides: Guide[] = [
         ],
       },
     ],
-    closing: {
-      heading: "Key Takeaways",
-      bullets: [
-        "Evidence narrows the list; behavior confirms it — lean on tells the moment a difficulty hides evidence from you.",
-        "Know your map's light limit and fuse box pool before you start flipping switches.",
-        "A hunt's grace period is a window to move, not a countdown to verify — if the doors locked, go.",
-        "Looping only works on ghosts with standard LoS acceleration — know the exceptions before you commit to one.",
-      ],
-    },
   },
   {
     id: "zero-evidence-walkthrough",
-    title: "Zero-Evidence Investigation Walkthrough",
+    title: "0-Evidence Walkthrough",
     summary:
-      "Zero-Evidence broken down step by step — the elimination order one experienced investigator uses when there's no evidence to lean on.",
+      "Broken down step by step — a way to identify each ghost, more or less, heavily focused on the first hunt alone, which can rule out a good chunk of the roster.",
     intro: [],
     stages: [
       {
         heading: "Stage 1 — Read the first hunt",
         intro:
-          "During the very first hunt, you're passively collecting several signals at once: **speed**, **blink pattern**, **throw behavior**, and **line-of-sight acceleration**. A single hunt can eliminate close to half the roster if you know what to watch for.",
+          "During the very first hunt — which in a zero-evidence contract usually lands early, before much time has passed or many objects have been touched — you're passively reading several signals at once: **speed**, **line-of-sight behavior**, **salt**, **visual tells**, and **throw force**. A single hunt can eliminate close to half the roster.",
         items: [
           {
             title: "1. Base speed",
-            body: "If the ghost is moving at the standard 1.7 m/s the whole time (not visibly slow, not visibly fast), you can immediately rule out every ghost with a **non-standard base or conditional speed**:",
+            body: "A steady 1.7 m/s the whole hunt (not visibly slow, not visibly fast) rules out every ghost with a **non-standard base or conditional speed**. Because this hunt is early, all of the following are testable off raw speed alone — no need to wait for a second hunt:",
             bullets: [
-              "**Deogen** — inverts entirely: ~3.0 m/s far away, slowing to ~0.4 m/s up close. Constant \"normal\" speed doesn't match either extreme.",
-              "**Moroi** — 1.5 m/s at high sanity, up to 2.25 m/s (and up to ~3.71 m/s combined with LOS acceleration) as sanity drops toward 0%. At anything other than very specific sanity, its speed reads as \"off\" from standard.",
-              "**Raiju** — jumps to 2.5 m/s only near *active* electronics (including gear in your own hands, like a flashlight). If it doesn't speed up while you're holding on active flashlight nearby, that's a direct test against Raiju.",
-              "**Revenant** — a stark binary: 1.0 m/s with no line of sight/detection, 3.0 m/s once it detects you or your electronics. Neither of those is \"normal,\" so a steady 1.7 m/s rules it out immediately.",
+              "**Deogen** — inverts entirely: ~3.0 m/s far away, slowing to ~0.4 m/s up close. Steady 1.7 m/s matches neither extreme.",
+              "**Moroi** — 1.5 m/s at high sanity, up to 2.25 m/s (~3.71 m/s combined with LOS acceleration) as sanity nears 0%. Anything but a specific low-sanity moment reads as \"off.\"",
+              "**Raiju** — jumps to 2.5 m/s only near *active* electronics, including gear in your own hands. No speed-up while holding a lit flashlight nearby rules it out.",
+              "**Revenant** — a stark binary: 1.0 m/s undetected, 3.0 m/s once it detects you or your electronics. Neither matches a steady 1.7 m/s.",
+              "**Deildegast** — resets to 3.0 m/s at the start of every hunt if nothing's been interacted with since the last one. This early almost nothing has been touched, so a genuinely standard-speed hunt rules it out (it only grinds down toward ~0.4 m/s later, as objects get used).",
+              "**Thaye** — starts every contract at its fastest \"youngest\" state (~2.75 m/s), only slowing as it ages later on. This early it should still read fast, not standard.",
+            ],
+            speeds: [
+              { label: "Deogen (close)", value: 0.4 },
+              { label: "Revenant (undetected)", value: 1.0 },
+              { label: "Standard", value: 1.7 },
+              { label: "Moroi (near 0% sanity)", value: 2.25 },
+              { label: "Raiju (near active electronics)", value: 2.5 },
+              { label: "Thaye (youngest state)", value: 2.75 },
+              { label: "Deogen (far) · Revenant (detected) · Deildegast (fresh hunt)", value: 3.0 },
             ],
           },
           {
-            title: "2. The Jinn test (distance + LOS)",
-            body: "Jinn only speeds up to 2.5 m/s when it has line of sight on a player **more than 3 meters away** *and* the breaker is on. If you were >3m away, in its sight, breaker on, and it didn't accelerate — not a Jinn.",
+            title: "2. Line-of-sight speed",
+            body: "Most ghosts gradually accelerate under sustained line of sight, reaching roughly 1.65× base speed (~2.805 m/s) after about 13 seconds. Four ghosts break from that baseline, each testable by watching how it reacts to your position or movement:",
+            bullets: [
+              "**Jinn** — speed snaps straight to a fixed 2.5 m/s only when the breaker is on *and* a target is more than 3m away *and* in its line of sight; otherwise it's a normal 1.7 m/s. >3m away, in its sight, breaker on, and no acceleration — not a Jinn.",
+              "**Hantu** — never gets a line-of-sight speed boost at all, no matter how long it holds sight on you. Speed is set purely by room temperature (up to 2.7 m/s cold, down to 1.4 m/s warm). No acceleration through a long, sustained chase points straight at Hantu.",
+              "**Aswang** — does get the acceleration, just abnormally fast off a lower starting speed (1.53 m/s), maxing out at 2.53 m/s in under 9 seconds instead of the usual ~13. A ramp-up that completes suspiciously early is the tell.",
+              "**Dayan** — doesn't ramp on sustained LOS at all; it locks to a fixed speed based on whether the nearest player is moving (2.25 m/s) or standing still (1.2 m/s), regardless of how long it's held sight. Testable mid-loop: break LOS at a corner, then stop dead instead of continuing to move — a dramatic slowdown to a crawl the moment you go still all but confirms Dayan.",
+            ],
           },
           {
             title: "3. Salt",
-            body: "Wraith is the only ghost in the game that **never disturbs salt** under any circumstance — it walks through without leaving a footprint or getting slowed. If the ghost stepped in salt and disturbed it at least once, that's a clean elimination of Wraith. **Gallu** is a different kind of salt tell: its behavior flips with its state — it won't disturb salt while **Enraged** (right after salt/incense/crucifix is used on it) but disturbs it normally once **Weakened** (right after a hunt ends). Salt disturbance that's inconsistent across multiple triggers, rather than a hard never/always, points at Gallu instead of a straight Wraith read.",
+            body: "**Wraith** is the only ghost that never disturbs salt — it walks through without a footprint or slowdown. Salt disturbed at least once cleanly rules out Wraith. **Gallu** flips its salt behavior with its state instead: it won't disturb salt while **Enraged**. To test for it, get it Enraged first — either by walking it through an initial patch of salt, or by using incense or a crucifix on it — then lead it to a second, separate patch and watch whether it avoids disturbing that one too. Give it a moment before testing: the shift into Enraged takes 2 seconds, so triggering it and testing salt in the same instant can give a false read.",
           },
           {
-            title: "4. The standard line-of-sight acceleration check",
-            body: "This is the detail worth knowing cold: **most ghosts** gradually accelerate while holding continuous line of sight on a player, reaching roughly 1.65× base speed (~2.805 m/s) after about 13 seconds. This is a *universal* mechanic layered under everything else — but there are exactly **four confirmed exceptions that never get this acceleration**: **Hantu**, **Thaye**, **Deogen** (which instead slows down as it closes in), and **Deildegast** (whose hunt speed is instead set entirely by how many unique objects have been interacted with since its last hunt — 3.0 m/s if nothing's been touched, grinding down to a floor of ~0.4 m/s after 26-30 interactions). **Aswang** is a fifth wrinkle worth watching separately: it *does* get the acceleration, just abnormally fast, off a lower starting speed — reaching full sprint in under 9 seconds of sustained line of sight instead of the usual ~13. If you clocked a standard ~13-second ramp-up, you've ruled out all four non-accelerators plus Aswang's fast-ramp variant at once — Deogen is usually already excluded by its own distinctive speed signature above, so the useful new information here is against Hantu, Thaye, Deildegast, and Aswang.",
-          },
-          {
-            title: "4b. Hantu vs. Thaye vs. Deildegast",
-            body: "If no LOS speed-up showed up, Hantu, Thaye, and Deildegast are all still live and need separating from each other: watch how speed trends across the investigation rather than within a single hunt. **Thaye** ages with the contract — it gets progressively slower the longer the investigation runs, so a hunt late in the round should be noticeably sluggish next to one from early on, and that slowdown never resets. **Hantu**, instead, tracks room temperature — faster in a cold room, closer to normal in a warm one — regardless of how much time has passed or how many hunts have happened. **Deildegast** resets to a fast 3.0 m/s at the start of every hunt and then grinds down purely off how many unique objects get interacted with before the *next* hunt — so a hunt that comes in fast again shortly after the last one (with little object interaction in between) points to Deildegast, while a slowdown that's tied to elapsed contract time points to Thaye and one tied to room temperature points to Hantu.",
-          },
-          {
-            title: "5. Blink pattern",
-            body: "Ghosts flicker in and out of visibility during hunts at a fairly consistent rate. Two ghosts break from that baseline in opposite directions:",
+            title: "4. Visual: blink pattern & model",
+            body: "Two passive reads from the same hunt:",
             bullets: [
-              "**Phantom** blinks slower, with longer gaps of invisibility.",
-              "**Oni** blinks faster and more frequently.",
+              "**Phantom** blinks slower, with longer invisible gaps (up to ~1.9s per cycle vs under 1s normally). **Oni** breaks the opposite way — it blinks less often and stays visible for longer stretches, easier to see mid-chase rather than flickerier.",
+              "**Obake** is the only ghost that swaps its model mid-hunt, on a fixed schedule of blink counts — the same model held the whole hunt (assuming it ran long enough to hit those triggers) rules it out.",
+              "**Dayan** is always a female model, and **Banshee** is the only other ghost locked female.",
+              "**Hantu** — if it hasn't already been ruled out by the line-of-sight test above, check for visible freezing breath during the hunt: it shows specifically when the breaker is off or broken, and no other ghost has this tell.",
             ],
+            diagram: "blink-pattern",
+            imageGallery: {
+              label: "The 4 female ghost models",
+              images: [
+                { src: "/images/ghost-models/argyro.webp", alt: "Argyro — one of the 4 female ghost models" },
+                { src: "/images/ghost-models/creepy-girl.webp", alt: "Creepy Girl — one of the 4 female ghost models" },
+                { src: "/images/ghost-models/old-crone.webp", alt: "Old Crone — one of the 4 female ghost models" },
+                { src: "/images/ghost-models/ring-girl.webp", alt: "Ring Girl — one of the 4 female ghost models" },
+              ],
+              note: "These are the only 4 female models in the game. If the ghost's model doesn't match any of them, that rules out **Dayan** and **Banshee** — matching one doesn't confirm either, though, since unrestricted ghosts can roll a female model too.",
+            },
           },
           {
-            title: "6. Model",
-            body: "**Obake** is the only ghost that swaps its model mid-hunt, on a fixed schedule of specific blink counts. If the model stayed the same the whole hunt (and the hunt ran long enough to plausibly hit those trigger points), that's an elimination of Obake. Separately, **Dayan** is always a female ghost model. **Banshee** is the only other ghost in the game locked to a female model — so this is a free, passive check for both: if the model reads as male, Dayan and Banshee are both ruled out immediately.",
-          },
-          {
-            title: "7. Throw force",
+            title: "5. Throw force",
             body: "**Poltergeist** throws items far more often (roughly every 0.5 seconds when objects are in range) and with noticeably more force than any other ghost. Ordinary, infrequent object interaction rules it out.",
           },
         ],
@@ -275,19 +312,19 @@ export const guides: Guide[] = [
       {
         heading: "Stage 2 — Detection range",
         intro:
-          "Still during that same first hunt: three ghosts have hearing or detection ranges wildly different from normal, worth checking before you move on.",
+          "Still during that first hunt, or a second dedicated one if you need it: three ghosts have hearing or detection ranges far from normal.",
         items: [
           {
-            title: "8. Myling",
-            body: "Myling's hunt-audio range is reduced — footsteps and vocals cut off around 12m instead of the normal ~20m. If you can hear it clearly from further away than that during the hunt, it's not a Myling.",
+            title: "6. Myling",
+            body: "Myling's hunt-audio range is reduced — footsteps and vocals cut off around 12m instead of ~20m. Judging that distance by ear alone is hard, so drop a flashlight (or any other electronic) at a fixed spot before the hunt: electronics flicker within ~10m of any ghost, close enough to Myling's ~12m cutoff to double as a rough visual marker for the same range. Still hearing it clearly once the flashlight's well behind you rules it out.",
           },
           {
-            title: "9. Yokai",
-            body: "Yokai has a drastically reduced detection range during a hunt (roughly 2.5m for electronics vs. the normal 7.5m/9m). Walk away, then turn on an electronic item (like a flashlight) from well outside that range while it's hunting. If it reacts and comes straight back, that's inconsistent with Yokai's short detection radius — rule it out.",
+            title: "7. Yokai",
+            body: "Yokai's electronics detection range during a hunt drops to ~2.5m (vs. the normal 7.5–9m). Walk away, then turn on an electronic item from well outside that range while it's hunting — if it reacts and comes straight back, rule it out.",
           },
           {
-            title: "10. Kormos",
-            body: "Kormos is completely blind during hunts and tracks purely by sound, but with detection range far beyond normal — roughly 10m crouched, 15m walking, 30m sprinting, even through walls and doors. Staying crouched and silent lets you walk right past it in plain sight during a hunt; if it beelines for you anyway with no noise made, it's not a Kormos.",
+            title: "8. Kormos",
+            body: "Kormos is completely blind during hunts and tracks purely by sound, but from far beyond normal range — roughly 10m crouched, 15m walking, 30m sprinting, even through walls. Staying crouched and silent lets you walk right past it in plain sight; if it beelines for you anyway with no noise made, it's not a Kormos.",
           },
         ],
       },
@@ -296,27 +333,32 @@ export const guides: Guide[] = [
         intro: "With the field narrowed, head to the ghost's favorite room and run a couple of setups at once.",
         items: [
           {
-            title: "11. Crucifix + firelight test (Onryo vs. Shade)",
-            body: "Place a **crucifix** and a **lit firelight** in the same room. **Onryo** is built around extinguishing flames as part of its hunt-trigger logic — if a nearby lit flame is within range when it would otherwise start a hunt, it prioritizes blowing that flame out *instead of* triggering the hunt. So: if the crucifix burns (meaning a hunt was attempted and blocked) *while the firelight is still lit*, that's inconsistent with Onryo's known behavior — rule it out. While you're waiting in the room, if the ghost **hunts while you're physically inside its favorite room**, that rules out **Shade** — it's specifically restricted from hunting, doing events, or most EMF-tier interactions while a player shares its room. *Caveat: watch room boundaries carefully on small maps — a Shade can step just outside its room to interact and create a false positive, so don't rule it out from a borderline case.*",
+            title: "9. Crucifix + firelight test (Onryo vs. Shade)",
+            body: "Place a **crucifix** and a **lit firelight** in the same room. **Onryo** prioritizes blowing out a nearby lit flame over triggering a hunt — a crucifix that burns (a hunt was attempted and blocked) while the firelight stays lit is inconsistent with Onryo; rule it out. Meanwhile, a hunt while you're physically inside the room rules out **Shade**, which can't hunt, run events, or do most EMF-tier interactions while a player shares its room. *Caveat: on small maps a Shade can step just outside its room to interact — don't rule it out on a borderline case.*",
           },
           {
-            title: "12. Orb check",
-            body: "While in the room, check for ghost orbs. **The Mimic's** ability spawns an orb in its favorite room as an unofficial \"extra\" piece of evidence — one that shows up even outside its official evidence set, and even on zero/low-evidence difficulties, since it isn't officially tied to the evidence system. Seeing an orb here is a solid Mimic tell.",
+            title: "10. Orb check",
+            body: "**The Mimic's** ability spawns an extra ghost orb in its favorite room — outside its official evidence set, and even on zero/low-evidence difficulties. An orb here is a solid Mimic tell.",
+          },
+          {
+            title: "11. Poltergeist test (lit room)",
+            body: "Head to its favorite room with the lights on and some interactable objects nearby. **Poltergeist** is the only ghost that can interact with and throw objects while the room is fully lit — every other ghost's object interactions need darkness, so any object movement here is a strong tell on its own. Also watch for its 'py-bomb': outside of a hunt, it can throw every interactable item in range all at once (draining ~2% sanity per item) — a sudden pile of objects thrown together instead of one at a time is close to a confirmed Poltergeist.",
           },
         ],
       },
       {
-        heading: "Stage 4 — Smudge test (Demon vs. Spirit)",
+        heading: "Stage 4 — Smudge test",
         intro:
-          "One more active test before falling back on passive reads: if you've still got a smudge stick, its hunt-cooldown side effect narrows two of the trickiest ghosts in one shot.",
+          "One more active test before falling back on passive reads: a smudge stick's cooldown side effect narrows two of the trickiest ghosts at once.",
         items: [
           {
-            title: "13. Smudge test (Demon vs. Spirit)",
+            title: "12. Smudge test",
             body: "Smudge the ghost and time the next hunt:",
             bullets: [
-              "**Demon** needs only ~60 seconds after a smudge before it can hunt again (vs. the normal 90s).",
-              "**Spirit** is the opposite extreme — it needs a full 180 seconds (3 minutes) before it can hunt again.",
+              "**Demon** needs only ~60 seconds after a smudge (vs. the normal 90s).",
+              "**Spirit** needs a full 180 seconds (3 minutes).",
               "A hunt landing well outside either window rules out both.",
+              "No smudges left? **Demon** still gives itself away on its baseline re-hunt cooldown alone: it can start a new hunt as little as ~20 seconds after the last one ends, versus a 25-second minimum for every other ghost — no smudge needed, just a stopwatch on two consecutive hunts.",
             ],
           },
         ],
@@ -324,52 +366,60 @@ export const guides: Guide[] = [
       {
         heading: "Stage 5 — Varying speed",
         intro:
-          "These ghosts don't have one fixed hunt speed — theirs shifts predictably, either on a timer or off an external trigger. Catching the pattern across more than one hunt (or one hunt with a state change) is the tell.",
+          "These ghosts shift hunt speed predictably, on a timer or off an external trigger — catching the pattern across hunts (or a state change mid-hunt) is the tell.",
         items: [
           {
-            title: "14. Twins",
-            body: "Twins randomly roll one of two fixed hunt speeds each time (slower ~1.5 m/s or faster ~1.9 m/s) — the point is that repeated hunts should show visible *speed variance* between them. If every hunt has come in at the same consistent speed across multiple hunts, that's a mark against Twins.",
+            title: "13. Twins",
+            body: "Twins randomly roll one of two fixed hunt speeds each time (~1.5 m/s or ~1.9 m/s) — repeated hunts should show visible speed variance. The same speed every time is a mark against Twins.",
           },
           {
-            title: "15. Obambo",
-            body: "Obambo alternates between two states roughly every 2 minutes: **Aggressive** (~1.96 m/s, hunts at ≤65% sanity, hunts run 20% shorter) and **Calm** (~1.45 m/s, hunts only at ≤10% sanity). It starts every contract Calm, first switching about a minute after the exit door is opened, and can even flip state mid-hunt — a hunt that visibly speeds up or slows down partway through is a strong Obambo tell.",
+            title: "14. Obambo",
+            body: "Obambo alternates **Aggressive** (~1.96 m/s, hunts at ≤65% sanity, 20% shorter hunts) and **Calm** (~1.45 m/s, hunts only at ≤10% sanity) roughly every 2 minutes, starting Calm and first switching about a minute after the exit door opens. It can flip state mid-hunt — a hunt that visibly speeds up or slows down partway through is a strong tell.",
           },
           {
-            title: "16. Gallu, again",
-            body: "Gallu's three-state cycle also shows up as a raw speed change, not just the salt behavior from earlier: Normal (1.7 m/s) → Enraged (1.96 m/s, triggered by salt/incense/crucifix) → Weakened (1.36 m/s, right after a hunt ends) → back to Normal. A ghost that visibly speeds up right after you use salt/incense/crucifix on it, then visibly slows down right after a hunt ends, is about as confirmed as Gallu gets without evidence.",
+            title: "15. Gallu, again",
+            body: "Gallu's three-state cycle shows up as raw speed too, not just salt: Normal (1.7 m/s) → Enraged (1.96 m/s, after salt/incense/crucifix) → Weakened (1.36 m/s, right after a hunt ends) → back to Normal. A visible speed-up right after using salt/incense/crucifix, followed by a slowdown right after a hunt ends, is about as confirmed as Gallu gets without evidence.",
           },
         ],
       },
       {
         heading: "Stage 6 — The stragglers",
         intro:
-          "The rest of the roster comes down to behavior patterns rather than a single clean test — worth checking last since they lean on probability or absence rather than a hard rule.",
+          "The rest of the roster comes down to behavior patterns rather than a single clean test — check these last since they lean on probability or absence, not a hard rule.",
         items: [
           {
-            title: "17. Yurei",
-            body: "Yurei must fully open or fully close any door it interacts with — leaving a door at any half-open state is impossible for it. If the ghost's room has no doors to observe, this test simply can't run, and Yurei stays on the table until you can test it another way (e.g. tracking with motion sensors whether it gets trapped in-room for ~90 seconds after a smudge, another documented Yurei trait).",
+            title: "16. Yurei",
+            body: "Yurei must fully open or fully close any door it interacts with — a half-open door is impossible for it. No door in its room means this test can't run; fall back on whether it gets trapped in-room for ~90 seconds after a smudge instead.",
           },
           {
-            title: "18. Banshee",
-            body: "By this stage, you're watching whether the ghost seems to be actively roaming toward you specifically, the way a Banshee stalks its one chosen target. If you're unsure, listen for the distinct wail on a parabolic mic or sound recorder — it has roughly a 1-in-3 chance of producing it on a given response. After several non-scream responses in a row, the odds swing hard against Banshee, though — being probability-based — this isn't an absolute proof the way a salt-and-Wraith test is.",
+            title: "17. Banshee",
+            body: "Watch whether it roams directly toward you specifically, the way a Banshee stalks one chosen target. Its wail on a parabolic mic/recorder has roughly a 1-in-3 chance per response — several non-scream responses in a row swings the odds against it, though this is probability, not proof.",
+          },
+          {
+            title: "18. Mare",
+            body: "Mare can never turn a light source ON, only off — catching it turn one on is an immediate elimination. It also has an elevated chance to flip a switch back off within 4m within moments of a player turning it on; one occurrence could be coincidence, but repeated occurrences are a real tell.",
+          },
+          {
+            title: "19. Goryo",
+            body: "Goryo never changes its favorite room for the whole contract — track where activity clusters across every hunt and event. A confirmed room change rules it out; if the room hasn't moved and nothing else has landed, that's the extent of the case for Goryo without evidence tools.",
           },
         ],
       },
     ],
     closing: {
-      heading: "The Hardest to Pin Down: Mare, Demon, Goryo, Yurei, Spirit, Shade",
+      heading: "Hardest to Pin Down",
       intro:
-        "If you've run this whole flow and you're still stuck, there's a good chance you've landed on one of the ghosts the wider Phasmophobia community broadly agrees are the hardest to pin down with zero evidence:",
+        "If you've run this whole flow and you're still stuck, you've likely landed on one of the ghosts the wider community agrees are hardest to pin down with zero evidence:",
       bullets: [
-        "**Mare** — its only real tell (preferring darkness, killing lights right after they're turned on, never turning lights *on*) is something any ghost can coincidentally do; you need to see the pattern repeat before it means anything.",
-        "**Demon** — without incense/smudges left to test its short hunt-cooldown, and without a Ouija board or crucifix interaction to watch, it has very little that separates it from a \"generic\" fast, aggressive ghost.",
-        "**Goryo** — its defining trait (never changing its favorite room) is a non-event you can only confirm by absence over time; it gives you nothing active to test for.",
-        "**Yurei** — its door test needs an actual door in its favorite room to run at all; without one, you're left relying on the weaker, indirect smudge-trap sign instead of a clean test.",
-        "**Spirit** — its only tell is a ~180s re-hunt after a smudge; burn your last smudge stick early or on the wrong ghost, and there's nothing left that separates it from a default one.",
-        "**Shade** — ruled out only by catching it hunting while you share its room, which means being in the right place at the right time, and small-map room boundaries can produce a false positive either way.",
+        "**Mare** — its light tell is something any ghost can coincidentally do once; you need the pattern to repeat before it means anything.",
+        "**Demon** — without a smudge or Ouija/crucifix interaction left to test, little separates it from a \"generic\" fast, aggressive ghost.",
+        "**Goryo** — its favorite-room test only confirms by absence over time; it gives you nothing active to test for.",
+        "**Yurei** — its door test needs an actual door in its favorite room; without one you're left with the weaker smudge-trap sign.",
+        "**Spirit** — its only tell is a ~180s re-hunt after a smudge; burn your last one on the wrong ghost and nothing else separates it from default.",
+        "**Shade** — only ruled out by catching it hunting while you share its room, and small-map room boundaries can produce a false positive either way.",
       ],
       outro:
-        "If every test in this flow has come back neutral, whatever's left standing among these six really is close to a coin flip. At that point: pick one, and treat it as an educated guess rather than a certainty.",
+        "If every test comes back neutral, whatever's left among these six is close to a coin flip — pick one and treat it as an educated guess, not a certainty.",
     },
   },
   {

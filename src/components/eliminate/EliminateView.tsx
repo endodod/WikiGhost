@@ -10,7 +10,14 @@ import { SpeedFilter } from "@/components/eliminate/SpeedFilter";
 import { SpeedFinderTool } from "@/components/eliminate/SpeedFinderTool";
 import { Stopwatch } from "@/components/shared/Stopwatch";
 import { TellsChecklist } from "@/components/eliminate/TellsChecklist";
+import { ZeroEvidenceConfirmTells } from "@/components/eliminate/ZeroEvidenceConfirmTells";
+import { ZeroEvidenceStepper } from "@/components/eliminate/ZeroEvidenceStepper";
 import { getGhostById, ghosts } from "@/data/ghosts";
+import {
+  BASE_SPEED_ITEM_ID,
+  baseSpeedDefaultClue,
+  zeroEvidenceConfirmTells,
+} from "@/data/zeroEvidenceChecklist";
 import { cn } from "@/lib/cn";
 import { evaluateAll, hasActiveFilters, type EliminationState } from "@/lib/filter";
 import {
@@ -27,12 +34,17 @@ const initialEvidenceStates: Record<Evidence, EvidenceState> = Object.fromEntrie
   EVIDENCE_TYPES.map((ev) => [ev, "unknown"])
 ) as Record<Evidence, EvidenceState>;
 
+const confirmTellIds = new Set(zeroEvidenceConfirmTells.map((t) => t.id));
+
 export function EliminateView() {
   const [evidenceStates, setEvidenceStates] = useState(initialEvidenceStates);
   const [givenEvidenceCount, setGivenEvidenceCount] = useState<EvidenceCount>(3);
   const [speedBucket, setSpeedBucket] = useState<SpeedBucket | null>(null);
   const [sanityObserved, setSanityObserved] = useState<number | null>(null);
   const [activeClueIds, setActiveClueIds] = useState<string[]>([]);
+  const [zeroEvidenceMode, setZeroEvidenceModeRaw] = useState(false);
+  const [zeroEvidenceCheckedIds, setZeroEvidenceCheckedIds] = useState<string[]>([]);
+  const [zeroEvidenceResetKey, setZeroEvidenceResetKey] = useState(0);
   const { values, push } = useUrlParams(["fghost"]);
   const selectedGhost = values.fghost ? getGhostById(values.fghost) ?? null : null;
   const [highlightedIds, setHighlightedIds] = useState<string[]>([]);
@@ -46,24 +58,50 @@ export function EliminateView() {
 
   const state: EliminationState = useMemo(
     () => ({
-      foundEvidence: EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "found"),
-      ruledOutEvidence: EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "ruledOut"),
+      // Evidence/sanity inputs are hidden in 0-Evidence Mode — their state can't change while
+      // hidden, but this guards against a stale read still applying to the results.
+      foundEvidence: zeroEvidenceMode
+        ? []
+        : EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "found"),
+      ruledOutEvidence: zeroEvidenceMode
+        ? []
+        : EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] === "ruledOut"),
+      // Speed-bucket input is also hidden in 0-Evidence Mode — the checklist's own speed steps
+      // replace it.
+      speedBucket: zeroEvidenceMode ? null : speedBucket,
+      sanityObserved: zeroEvidenceMode ? null : sanityObserved,
+      // Until the base-speed test is actually checked, default to assuming the ghost is one of
+      // the 5 non-standard-speed ones rather than showing the full roster — "not yet tested"
+      // isn't the same as "confirmed standard." An Instant Confirm overrides this outright: it's
+      // a direct ID on a specific ghost, so the untested-speed assumption shouldn't fight it.
+      activeClueIds: zeroEvidenceMode
+        ? zeroEvidenceCheckedIds.includes(BASE_SPEED_ITEM_ID) ||
+          zeroEvidenceCheckedIds.some((id) => confirmTellIds.has(id))
+          ? zeroEvidenceCheckedIds
+          : [...zeroEvidenceCheckedIds, baseSpeedDefaultClue.id]
+        : activeClueIds,
+      givenEvidenceCount,
+    }),
+    [
+      zeroEvidenceMode,
+      evidenceStates,
       speedBucket,
       sanityObserved,
       activeClueIds,
+      zeroEvidenceCheckedIds,
       givenEvidenceCount,
-    }),
-    [evidenceStates, speedBucket, sanityObserved, activeClueIds, givenEvidenceCount]
+    ]
   );
 
   const verdicts = useMemo(() => evaluateAll(ghosts, state), [state]);
   const filtersActive =
     hasActiveFilters(state) || highlightedIds.length > 0 || crossedOutIds.length > 0;
   // Shown on the collapsed mobile panel header so it's clear filters are still applied.
-  const panelActiveCount =
-    EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] !== "unknown").length +
-    (sanityObserved !== null ? 1 : 0) +
-    (speedBucket !== null ? 1 : 0);
+  const panelActiveCount = zeroEvidenceMode
+    ? zeroEvidenceCheckedIds.length
+    : EVIDENCE_TYPES.filter((ev) => evidenceStates[ev] !== "unknown").length +
+      (sanityObserved !== null ? 1 : 0) +
+      (speedBucket !== null ? 1 : 0);
 
   const remainingCandidates = useMemo(
     () =>
@@ -92,6 +130,28 @@ export function EliminateView() {
     setActiveClueIds((cur) => (cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]));
   }
 
+  function toggleZeroEvidenceItem(id: string) {
+    setZeroEvidenceCheckedIds((cur) =>
+      cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]
+    );
+  }
+
+  function setZeroEvidenceMode(next: boolean) {
+    setZeroEvidenceModeRaw(next);
+    if (next) {
+      // Evidence count/toggles, sanity, and the speed bucket are hidden in this mode — clear
+      // them so a filter set before switching over doesn't keep silently narrowing the results.
+      setEvidenceStates(initialEvidenceStates);
+      setGivenEvidenceCount(3);
+      setSanityObserved(null);
+      setSpeedBucket(null);
+      setActiveClueIds([]);
+    } else {
+      setZeroEvidenceCheckedIds([]);
+      setZeroEvidenceResetKey((k) => k + 1);
+    }
+  }
+
   function toggleHighlight(id: string) {
     setHighlightedIds((cur) => (cur.includes(id) ? cur.filter((c) => c !== id) : [...cur, id]));
     setCrossedOutIds((cur) => cur.filter((c) => c !== id));
@@ -111,6 +171,8 @@ export function EliminateView() {
     setSpeedBucket(null);
     setSanityObserved(null);
     setActiveClueIds([]);
+    setZeroEvidenceCheckedIds([]);
+    setZeroEvidenceResetKey((k) => k + 1);
     setHighlightedIds([]);
     setCrossedOutIds([]);
     setSpeedFinderResetKey((k) => k + 1);
@@ -119,12 +181,38 @@ export function EliminateView() {
   return (
     <div className="flex flex-1 flex-col">
       <div className="mx-auto w-full max-w-7xl px-4 pt-4 sm:px-6">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-lg font-bold text-foreground">Find My Ghost</h1>
-          <p className="text-sm text-muted">
-            Toggle the evidence you&rsquo;ve found or ruled out, add sanity/speed readings and tells, and narrow down
-            the culprit.
-          </p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex flex-col gap-1">
+            <h1 className="text-lg font-bold text-foreground">Find My Ghost</h1>
+            <p className="text-sm text-muted">
+              {zeroEvidenceMode
+                ? "No evidence, no sanity readings — work through the checklist below to narrow down the culprit on behavior alone."
+                : "Toggle the evidence you’ve found or ruled out, add sanity/speed readings and tells, and narrow down the culprit."}
+            </p>
+          </div>
+
+          <button
+            onClick={() => setZeroEvidenceMode(!zeroEvidenceMode)}
+            role="switch"
+            aria-checked={zeroEvidenceMode}
+            title="Hides evidence/sanity inputs and behavioral tells in favor of a step-by-step 0-evidence checklist"
+            className={cn(
+              "flex min-h-9 shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition",
+              zeroEvidenceMode
+                ? "border-accent-strong bg-accent-strong/15 text-accent-strong"
+                : "border-surface-border bg-surface-2 text-muted hover:text-foreground"
+            )}
+          >
+            <span
+              className={cn(
+                "flex h-5 w-9 shrink-0 items-center rounded-full border border-surface-border px-0.5 transition-colors",
+                zeroEvidenceMode ? "justify-end bg-accent-strong" : "justify-start bg-surface"
+              )}
+            >
+              <span className="size-3.5 rounded-full bg-white shadow-sm" />
+            </span>
+            0-Evidence Mode
+          </button>
         </div>
       </div>
 
@@ -155,21 +243,28 @@ export function EliminateView() {
               )}
             >
               <div className="flex flex-col gap-3 lg:flex-1">
-                <EvidenceCountSelector value={givenEvidenceCount} onChange={setGivenEvidenceCount} />
+                {zeroEvidenceMode ? (
+                  <ZeroEvidenceStepper
+                    key={zeroEvidenceResetKey}
+                    checkedIds={zeroEvidenceCheckedIds}
+                    onToggle={toggleZeroEvidenceItem}
+                  />
+                ) : (
+                  <>
+                    <EvidenceCountSelector value={givenEvidenceCount} onChange={setGivenEvidenceCount} />
 
-                <EvidenceToggleGroup
-                  states={evidenceStates}
-                  onToggleFound={toggleFoundEvidence}
-                  onToggleRuledOut={toggleRuledOutEvidence}
-                />
+                    <EvidenceToggleGroup
+                      states={evidenceStates}
+                      onToggleFound={toggleFoundEvidence}
+                      onToggleRuledOut={toggleRuledOutEvidence}
+                    />
 
-                <div className="flex flex-col gap-3 border-t border-surface-border pt-3 sm:flex-row sm:items-center">
-                  <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
-                  <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
-                  <div className="w-full sm:w-56 sm:shrink-0">
-                    <Stopwatch />
-                  </div>
-                </div>
+                    <div className="flex flex-col gap-3 border-t border-surface-border pt-3 sm:flex-row sm:items-center">
+                      <SanityFilter value={sanityObserved} onChange={setSanityObserved} />
+                      <SpeedFilter value={speedBucket} onChange={setSpeedBucket} />
+                    </div>
+                  </>
+                )}
               </div>
 
               <div className="flex flex-col items-center gap-3 lg:w-72 lg:shrink-0 lg:items-stretch lg:border-l lg:border-surface-border lg:pl-6">
@@ -178,6 +273,27 @@ export function EliminateView() {
                     key={speedFinderResetKey}
                     candidates={remainingCandidates}
                     onHighlightMatches={applySpeedMatches}
+                  />
+                </div>
+
+                <div className="order-1 w-full sm:order-2">
+                  <Stopwatch
+                    label="Smudge Cooldown"
+                    thresholds={[
+                      { label: "Demon", seconds: 60 },
+                      { label: "Normal", seconds: 90 },
+                      { label: "Spirit", seconds: 180 },
+                    ]}
+                  />
+                </div>
+
+                <div className="order-1 w-full sm:order-2">
+                  <Stopwatch
+                    label="Hunt Cooldown"
+                    thresholds={[
+                      { label: "Demon", seconds: 20 },
+                      { label: "Normal", seconds: 25 },
+                    ]}
                   />
                 </div>
 
@@ -204,16 +320,22 @@ export function EliminateView() {
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-4 sm:px-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
           <div className="flex flex-col gap-5 lg:w-80 lg:shrink-0">
-            <NextStepPanel
-              remaining={remainingCandidates}
-              evidenceStates={evidenceStates}
-              givenEvidenceCount={givenEvidenceCount}
-              speedBucket={speedBucket}
-              sanityObserved={sanityObserved}
-              activeClueIds={activeClueIds}
-            />
+            {zeroEvidenceMode ? (
+              <ZeroEvidenceConfirmTells checkedIds={zeroEvidenceCheckedIds} onToggle={toggleZeroEvidenceItem} />
+            ) : (
+              <>
+                <NextStepPanel
+                  remaining={remainingCandidates}
+                  evidenceStates={evidenceStates}
+                  givenEvidenceCount={givenEvidenceCount}
+                  speedBucket={speedBucket}
+                  sanityObserved={sanityObserved}
+                  activeClueIds={activeClueIds}
+                />
 
-            <TellsChecklist activeIds={activeClueIds} onToggle={toggleClue} />
+                <TellsChecklist activeIds={activeClueIds} onToggle={toggleClue} />
+              </>
+            )}
           </div>
 
           <div className="min-w-0 flex-1">

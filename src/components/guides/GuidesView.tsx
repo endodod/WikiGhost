@@ -1,10 +1,13 @@
 "use client";
 
-import { guides, type Guide } from "@/data/guides";
+import { BlinkPatternDiagram } from "@/components/guides/BlinkPatternDiagram";
+import { SpeedClipButton } from "@/components/shared/SpeedClipButton";
+import { WikiImage } from "@/components/shared/WikiImage";
+import { guides, type Guide, type GuideItem } from "@/data/guides";
 import { cn } from "@/lib/cn";
 import { renderGuideText } from "@/lib/ghostLinker";
 import { useUrlParams } from "@/lib/useUrlParams";
-import { BookOpen, ChevronDown } from "lucide-react";
+import { BookOpen, ChevronDown, Ghost, ScanEye, Volume2, type LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function stageId(index: number) {
@@ -15,6 +18,78 @@ const CLOSING_CHAPTER = "closing";
 
 function chapterSectionId(chapter: string) {
   return chapter === CLOSING_CHAPTER ? "guide-closing" : stageId(Number(chapter));
+}
+
+/** Collapsed-by-default accordion wrapping any extra reference content hung off a guide item. */
+function ExpandableSection({
+  label,
+  icon: Icon,
+  children,
+}: {
+  label: string;
+  icon: LucideIcon;
+  children: React.ReactNode;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <div className="mt-2.5 border-t border-surface-border pt-2.5">
+      <button
+        onClick={() => setExpanded((e) => !e)}
+        className="flex min-h-8 w-full items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted transition hover:text-foreground"
+      >
+        <span className="flex items-center gap-1.5">
+          <Icon className="size-3.5" />
+          {label}
+        </span>
+        <ChevronDown className={cn("size-3.5 shrink-0 transition-transform", expanded && "rotate-180")} />
+      </button>
+      {expanded && <div className="mt-2.5">{children}</div>}
+    </div>
+  );
+}
+
+/** A per-item list of footstep-cadence clips (synthesized, not in-game audio). */
+function SpeedsAudioList({ speeds }: { speeds: NonNullable<GuideItem["speeds"]> }) {
+  return (
+    <ul className="flex flex-col gap-1">
+      {speeds.map((s, k) => (
+        <li key={k} className="flex items-center justify-between gap-3 text-sm">
+          <span className="text-muted">{s.label}</span>
+          <span className="flex shrink-0 items-center gap-1">
+            <span className="font-mono font-medium text-foreground/90">{s.value} m/s</span>
+            <SpeedClipButton speed={s.value} />
+          </span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ImageGallery({
+  gallery,
+  onViewGhost,
+}: {
+  gallery: NonNullable<GuideItem["imageGallery"]>;
+  onViewGhost: (ghostId: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {gallery.images.map((img, k) => (
+          <WikiImage
+            key={k}
+            src={img.src}
+            alt={img.alt}
+            wikiUrl="#"
+            fit="contain"
+            className="aspect-[3/4] w-full rounded-md border border-surface-border"
+          />
+        ))}
+      </div>
+      {gallery.note && <p className="text-xs text-muted">{renderGuideText(gallery.note, onViewGhost)}</p>}
+    </div>
+  );
 }
 
 function GuideContent({ guide, onViewGhost }: { guide: Guide; onViewGhost: (ghostId: string) => void }) {
@@ -54,31 +129,48 @@ function GuideContent({ guide, onViewGhost }: { guide: Guide; onViewGhost: (ghos
                     ))}
                   </ul>
                 )}
+                {item.speeds && (
+                  <ExpandableSection label={`Listen to speeds (${item.speeds.length})`} icon={Volume2}>
+                    <SpeedsAudioList speeds={item.speeds} />
+                  </ExpandableSection>
+                )}
+                {item.diagram === "blink-pattern" && (
+                  <ExpandableSection label="Blink pattern diagram" icon={ScanEye}>
+                    <BlinkPatternDiagram />
+                  </ExpandableSection>
+                )}
+                {item.imageGallery && (
+                  <ExpandableSection label={item.imageGallery.label} icon={Ghost}>
+                    <ImageGallery gallery={item.imageGallery} onViewGhost={onViewGhost} />
+                  </ExpandableSection>
+                )}
               </div>
             ))}
           </div>
         </section>
       ))}
 
-      <section
-        id="guide-closing"
-        className="flex scroll-mt-[calc(var(--app-header-h)+16px)] flex-col gap-3 rounded-xl border border-accent/30 bg-accent/5 p-4"
-      >
-        <h2 className="text-sm font-bold uppercase tracking-wide text-accent">
-          {renderGuideText(guide.closing.heading, onViewGhost)}
-        </h2>
-        {guide.closing.intro && (
-          <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.intro, onViewGhost)}</p>
-        )}
-        <ul className="list-disc space-y-1.5 pl-4 text-sm text-foreground/90">
-          {guide.closing.bullets.map((b, i) => (
-            <li key={i}>{renderGuideText(b, onViewGhost)}</li>
-          ))}
-        </ul>
-        {guide.closing.outro && (
-          <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.outro, onViewGhost)}</p>
-        )}
-      </section>
+      {guide.closing && (
+        <section
+          id="guide-closing"
+          className="flex scroll-mt-[calc(var(--app-header-h)+16px)] flex-col gap-3 rounded-xl border border-accent/30 bg-accent/5 p-4"
+        >
+          <h2 className="text-sm font-bold uppercase tracking-wide text-accent">
+            {renderGuideText(guide.closing.heading, onViewGhost)}
+          </h2>
+          {guide.closing.intro && (
+            <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.intro, onViewGhost)}</p>
+          )}
+          <ul className="list-disc space-y-1.5 pl-4 text-sm text-foreground/90">
+            {guide.closing.bullets.map((b, i) => (
+              <li key={i}>{renderGuideText(b, onViewGhost)}</li>
+            ))}
+          </ul>
+          {guide.closing.outro && (
+            <p className="text-sm text-foreground/90">{renderGuideText(guide.closing.outro, onViewGhost)}</p>
+          )}
+        </section>
+      )}
 
       {guide.sources && (
         <section className="flex flex-col gap-2 border-t border-surface-border pt-4">
@@ -198,12 +290,14 @@ export function GuidesView() {
                           {stage.heading}
                         </button>
                       ))}
-                      <button
-                        onClick={() => selectChapterOf(g.id, CLOSING_CHAPTER)}
-                        className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
-                      >
-                        {g.closing.heading}
-                      </button>
+                      {g.closing && (
+                        <button
+                          onClick={() => selectChapterOf(g.id, CLOSING_CHAPTER)}
+                          className="flex min-h-10 items-center rounded-lg px-3 py-1.5 text-left text-xs text-muted transition hover:bg-surface-2 hover:text-foreground sm:min-h-0"
+                        >
+                          {g.closing.heading}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

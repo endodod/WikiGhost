@@ -192,6 +192,7 @@ export const ghosts: Ghost[] = [
     reHuntCooldown: "90s (default)",
     abilities: [
       "Three-state cycle: Normal → Enraged (triggered by salt/incense/crucifix, won't disturb salt, crucifix range −2m) → Weakened (after hunt ends, crucifix range +1m, disturbs salt normally) → back to Normal",
+      "State transitions aren't instant: 2s to shift into Enraged, 3s to shift into Weakened",
     ],
     noEvidenceTells: [
       "Speed and aggression noticeably jump right after salt, incense, or a crucifix is used on it, or calm down right after a hunt ends",

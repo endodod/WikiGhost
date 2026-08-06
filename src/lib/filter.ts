@@ -1,11 +1,20 @@
 import { clues } from "@/data/clues";
 import {
+  baseSpeedDefaultClue,
+  zeroEvidenceConfirmTells,
+  zeroEvidenceItems,
+} from "@/data/zeroEvidenceChecklist";
+import {
   SPEED_BUCKETS,
   type Evidence,
   type EvidenceCount,
   type Ghost,
   type SpeedBucket,
 } from "@/lib/types";
+
+// Behavioral tells and 0-Evidence checklist items share the same `Clue` shape and the same
+// `activeClueIds` slot in EliminationState, so all of these are resolved from one combined lookup.
+const allClues = [...clues, ...zeroEvidenceItems, ...zeroEvidenceConfirmTells, baseSpeedDefaultClue];
 
 export interface EliminationState {
   foundEvidence: Evidence[];
@@ -109,7 +118,7 @@ export function evaluateGhost(ghost: Ghost, state: EliminationState): GhostVerdi
 
   // Behavioral clue toggles.
   for (const clueId of state.activeClueIds) {
-    const clue = clues.find((c) => c.id === clueId);
+    const clue = allClues.find((c) => c.id === clueId);
     if (!clue) continue;
     if (clue.eliminate?.includes(ghost.id)) {
       reasons.push(clue.label);
@@ -136,11 +145,14 @@ export function evaluateAll(ghosts: Ghost[], state: EliminationState): GhostVerd
 }
 
 export function hasActiveFilters(state: EliminationState): boolean {
+  // baseSpeedDefaultClue is injected automatically in 0-Evidence Mode rather than user-toggled,
+  // so it shouldn't make Reset All look active when nothing else has actually been touched.
+  const activeClueIds = state.activeClueIds.filter((id) => id !== baseSpeedDefaultClue.id);
   return (
     state.foundEvidence.length > 0 ||
     state.ruledOutEvidence.length > 0 ||
     state.speedBucket !== null ||
     state.sanityObserved !== null ||
-    state.activeClueIds.length > 0
+    activeClueIds.length > 0
   );
 }
